@@ -84,6 +84,8 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 			aSubor.write(aBuffer.dajBajty());
 		}
 		aSubor.close();
+		System.out.println("Pocet Blokov: "+aInfoBlok.getPocetBlokov());
+		System.out.println("Pocet info Blokov: "+aInfoBlok.getPocetInfoBlokov());
 	}
 	
 	public T dajVolnyZaznam() throws IOException {

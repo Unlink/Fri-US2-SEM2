@@ -28,16 +28,20 @@ public class Main {
 		List<IZaznam> strukturaBloku = new ArrayList<>();
 		strukturaBloku.add(new Automobil());
 		strukturaBloku.add(new Automobil());
+		strukturaBloku.add(new Automobil());
+		strukturaBloku.add(new Automobil());
 		try(
 			BinarnySubor<Automobil> test = new BinarnySubor<>(strukturaBloku, new File("testSubor.bin"))
 		) {
 			HashMap<String, Long> testData = new HashMap<>();
-			for (int i = 0; i < 10000; i++) {
+			HashMap<String, Long> testData2 = new HashMap<>();
+			for (int i = 0; i < 100000; i++) {
 				Automobil record = test.dajVolnyZaznam();
 				record.setEvcVozidla(randomString(7).toUpperCase());
 				record.nastavValiditu(true);
 				test.ulozBlok();
 				testData.put(record.getEvcVozidla(), record.dajAdresu());
+				testData2.put(record.getEvcVozidla(), record.dajAdresu());
 				//System.out.println(i+": "+record.dajAdresu()+" -> "+record.getEvcVozidla());
 			}
 			
@@ -51,7 +55,38 @@ public class Main {
 				}
 			}
 			
+			int x = 0;
 			for (Map.Entry<String, Long> entrySet : testData.entrySet()) {
+				//System.out.println("Mazem "+entrySet.getValue());
+				Automobil record = test.dajZaznam(entrySet.getValue());
+				record.nastavValiditu(false);
+				test.ulozBlok();
+				testData2.remove(entrySet.getKey());
+				if (x++ > 30000) {
+					break;
+				}
+			}
+			
+			for (int i = 0; i < 30000; i++) {
+				Automobil record = test.dajVolnyZaznam();
+				record.setEvcVozidla(randomString(7).toUpperCase());
+				record.nastavValiditu(true);
+				test.ulozBlok();
+				testData2.put(record.getEvcVozidla(), record.dajAdresu());
+				//System.out.println(i+": "+record.dajAdresu()+" -> "+record.getEvcVozidla());
+			}
+			
+			for (Map.Entry<String, Long> entrySet : testData2.entrySet()) {
+				//System.out.println("Citam "+entrySet.getValue());
+				Automobil record = test.dajZaznam(entrySet.getValue());
+				//System.out.println(record.getEvcVozidla()+" = "+entrySet.getKey());
+				if (!record.getEvcVozidla().equals(entrySet.getKey())) {
+					System.err.println("ERRORRRRR");
+					break;
+				}
+			}
+			
+			for (Map.Entry<String, Long> entrySet : testData2.entrySet()) {
 				//System.out.println("Mazem "+entrySet.getValue());
 				Automobil record = test.dajZaznam(entrySet.getValue());
 				record.nastavValiditu(false);
@@ -59,12 +94,8 @@ public class Main {
 			}
 			
 			
-			
  			Automobil record = test.dajVolnyZaznam();
-			record.setEvcVozidla(randomString(7).toUpperCase());
-			record.nastavValiditu(true);
-			test.ulozBlok();
-			long auto1 = record.dajAdresu();
+			System.out.println("Adresa noveho recordu "+record.dajAdresu());
 			
 			/*
 			record = test.dajVolnyZaznam();
@@ -101,13 +132,16 @@ public class Main {
 		}
 	}
 	
+	private static int EVCX = 1;
+	
 	public static String randomString(int len) {
-		String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz";
+		/*String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz";
 		Random rg = new Random();
 		StringBuilder sb = new StringBuilder(len);
 		for (int i = 0; i < len; i++) {
 			sb.append(AB.charAt(rg.nextInt(AB.length())));
 		}
-		return sb.toString();
+		return sb.toString();*/
+		return ""+(EVCX++);
 	}
 }
