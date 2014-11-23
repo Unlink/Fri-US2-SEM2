@@ -185,14 +185,43 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 		else if (aBuffer.jePrazndy()) {
 			aBitPole.nastavFlag(index, false);
 			aBitPole.nastavFlag(index+1, true);
+			aPoslednyBlok = (aPoslednyBlok > index) ? index : aPoslednyBlok;
 		}
 		else {
 			aBitPole.nastavFlag(index, true);
 			aBitPole.nastavFlag(index+1, false);
+			aPoslednyBlok = (aPoslednyBlok > index) ? index : aPoslednyBlok;
 		}
 		
 		aSubor.seek(aBuffer.getAdresaBloku()*aInfoBlok.getVelkostBloku());
 		aSubor.write(aBuffer.dajBajty());
+		
+		if (aBuffer.jePrazndy() && ((index/2) + 1) == aInfoBlok.getPocetBlokov()) {
+			zmensiSubor(index);
+		}
+			
+	}
+
+	private void zmensiSubor(int paIndex) throws IOException {
+		int poslednyZaznam = paIndex;
+		int zmazanych = 0;
+		
+		for (; poslednyZaznam > 0 && !aBitPole.dajFlag(poslednyZaznam); poslednyZaznam-= 2) {
+			zmazanych++;
+			aBitPole.nastavFlag(poslednyZaznam, false);
+			aBitPole.nastavFlag(poslednyZaznam+1, false);
+		}
+		
+		aInfoBlok.setPocetBlokov(aInfoBlok.getPocetBlokov()-zmazanych);
+		
+		int pocIndexBlokov = Math.max(1, ((aInfoBlok.getPocetBlokov()-1)/aBitPole.dajPocetZaznamovVBloku()) + 1);
+		if (aInfoBlok.getPocetInfoBlokov() != pocIndexBlokov) {
+			aBitPole.zmensiBlok(aInfoBlok.getPocetInfoBlokov() - pocIndexBlokov);
+			aInfoBlok.setPocetInfoBlokov(pocIndexBlokov);
+		}
+		
+		aSubor.setLength(realnyIndexBloku((poslednyZaznam)/2)*aInfoBlok.getVelkostBloku() + aInfoBlok.getVelkostBloku());
+		aBuffer.nastavAdresuBloku(-1);
 	}
 	
 }

@@ -36,8 +36,8 @@ public class BlokoveBitovePole {
 		aBitPole.zmenVelkost(aBitPole.dajVelkost()*8+aVelkostBloku*8);
 	}
 	
-	public void zmensiBlok() {
-		aBitPole.zmenVelkost(aBitPole.dajVelkost()*8-aVelkostBloku*8);
+	public void zmensiBlok(int paMnozstvo) {
+		aBitPole.zmenVelkost(aBitPole.dajVelkost()*8-aVelkostBloku*8*paMnozstvo);
 	}
 	
 	public boolean dajFlag(int paIndex) {

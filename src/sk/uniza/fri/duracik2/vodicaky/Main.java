@@ -28,15 +28,11 @@ public class Main {
 		List<IZaznam> strukturaBloku = new ArrayList<>();
 		strukturaBloku.add(new Automobil());
 		strukturaBloku.add(new Automobil());
-		strukturaBloku.add(new Automobil());
 		try(
 			BinarnySubor<Automobil> test = new BinarnySubor<>(strukturaBloku, new File("testSubor.bin"))
 		) {
 			HashMap<String, Long> testData = new HashMap<>();
 			for (int i = 0; i < 10000; i++) {
-				/*if (i == 5724) {
-					int c = 5;
-				}*/
 				Automobil record = test.dajVolnyZaznam();
 				record.setEvcVozidla(randomString(7).toUpperCase());
 				record.nastavValiditu(true);
@@ -54,6 +50,51 @@ public class Main {
 					break;
 				}
 			}
+			
+			for (Map.Entry<String, Long> entrySet : testData.entrySet()) {
+				//System.out.println("Mazem "+entrySet.getValue());
+				Automobil record = test.dajZaznam(entrySet.getValue());
+				record.nastavValiditu(false);
+				test.ulozBlok();
+			}
+			
+			
+			
+ 			Automobil record = test.dajVolnyZaznam();
+			record.setEvcVozidla(randomString(7).toUpperCase());
+			record.nastavValiditu(true);
+			test.ulozBlok();
+			long auto1 = record.dajAdresu();
+			
+			/*
+			record = test.dajVolnyZaznam();
+			record.setEvcVozidla(randomString(7).toUpperCase());
+			record.nastavValiditu(true);
+			test.ulozBlok();
+			long auto2 = record.dajAdresu();
+			
+			record = test.dajVolnyZaznam();
+			record.setEvcVozidla(randomString(7).toUpperCase());
+			record.nastavValiditu(true);
+			test.ulozBlok();
+			long auto3 = record.dajAdresu();
+			
+			record = test.dajVolnyZaznam();
+			record.setEvcVozidla(randomString(7).toUpperCase());
+			record.nastavValiditu(true);
+			test.ulozBlok();
+			long auto4 = record.dajAdresu();
+			
+			record = test.dajZaznam(auto3);
+			record.nastavValiditu(false);
+			test.ulozBlok();
+			
+			record = test.dajZaznam(auto4);
+			record.nastavValiditu(false);
+			test.ulozBlok();*/
+			
+			
+			
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
