@@ -16,7 +16,7 @@ import java.util.Arrays;
  *
  * @author Unlink
  */
-class Blok implements Cloneable {
+public class Blok implements Cloneable {
 
 	private final IZaznam[] aZaznamy;
 	private final BitovePole aValidne;
@@ -34,7 +34,7 @@ class Blok implements Cloneable {
 		aVelkost = aValidne.dajVelkost();
 		for (IZaznam zaznam : aZaznamy) {
 			aVelkost += zaznam.dajVelkost();
-			zaznam.nastavValiditu(false);
+			//zaznam.nastavValiditu(false);
 		}
 	}
 

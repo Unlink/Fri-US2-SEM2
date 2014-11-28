@@ -22,7 +22,10 @@ public class InfoBlok {
 	private int aPocetBlokov;
 	private int aPocetInfoBlokov;
 
-	public InfoBlok(byte[] data) {
+	public InfoBlok() {
+	}
+
+	public void deserializuj(byte[] data) {
 		DataInputStream input = new DataInputStream(new ByteArrayInputStream(data));
 		try {
 			aPocetZaznamov = input.readInt();
@@ -33,9 +36,9 @@ public class InfoBlok {
 		catch (IOException ex) {
 		}
 	}
-
-	public InfoBlok(int aVelkostBloku) {
-		this.aVelkostBloku = aVelkostBloku;
+	
+	public void inicializuj(int paVelksotBloku) {
+		this.aVelkostBloku = paVelksotBloku;
 		aPocetZaznamov = 0;
 		aPocetBlokov = 0;
 		aPocetInfoBlokov = 1;
