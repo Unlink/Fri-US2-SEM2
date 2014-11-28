@@ -93,9 +93,9 @@ public class Main {
 			record.setEvcVozidla(randomString(7).toUpperCase());
 			record.nastavValiditu(true);
 			test.ulozBlok();
-			long auto = record.dajAdresu();
+			/*long auto = record.dajAdresu();
 			record.nastavValiditu(false);
-			test.ulozBlok();
+			test.ulozBlok();*/
 			System.out.println("Adresa noveho recordu "+record.dajAdresu());
 			
 			/*

@@ -6,6 +6,8 @@
 package sk.uniza.fri.duracik2.blockfile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
@@ -19,6 +21,7 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 	
 	private RandomAccessFile aSubor;
 	private File aCesta;
+	private File aBitmapCesta;
 	private Blok aBuffer;
 	private InfoBlok aInfoBlok;
 	private BlokoveBitovePole aBitPole;
@@ -31,6 +34,7 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 	public BinarnySubor(List<IZaznam> paStruktura, File paSubor, int paVelkostBloku) throws IOException {
 		aBuffer = new Blok(paStruktura.toArray(new IZaznam[paStruktura.size()]));
 		aCesta = paSubor;
+		aBitmapCesta = new File(paSubor.getAbsolutePath()+".bitmap");
 		paVelkostBloku = (paVelkostBloku < 0) ? aBuffer.getVelkost() : paVelkostBloku;
 		if (!paSubor.exists()) {
 			vyvorNovySubor(paVelkostBloku);
@@ -43,12 +47,11 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 
 	private void vyvorNovySubor(int paVelkostBloku) throws IOException {
 		aCesta.createNewFile();
+		aBitmapCesta.createNewFile();
 		aSubor = new RandomAccessFile(aCesta, "rw");
 		aInfoBlok = new InfoBlok(paVelkostBloku);
 		aSubor.write(aInfoBlok.dajBajty());
 		aBitPole = new BlokoveBitovePole(paVelkostBloku, paVelkostBloku);
-		aSubor.seek(paVelkostBloku);
-		aSubor.write(aBitPole.dajBlok(0));
 	}
 	
 	private void nacitajZMetadat(int paVelkostBloku) throws IOException {
@@ -58,27 +61,25 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 		aSubor.read(buffer);
 		aInfoBlok = new InfoBlok(buffer);
 		aBitPole = new BlokoveBitovePole(aInfoBlok.getPocetInfoBlokov()*paVelkostBloku, paVelkostBloku);
+		FileInputStream fis = new FileInputStream(aBitmapCesta);
 		//Nacitanie bitoveho pola
 		for (int i = 0; i < aBitPole.dajPocetBlokov(); i++) {
-			aSubor.seek(spocitajAdresuBitPola(i));
-			aSubor.read(buffer);
+			fis.read(buffer);
 			aBitPole.nahrajBlok(i, buffer);
 		}
-	}
-	
-	private long spocitajAdresuBitPola(int paIndex) {
-		//Infoblok + x * velkost priestoru, ktorý blok pokrýva
-		return aInfoBlok.getVelkostBloku() + paIndex*(aBitPole.dajPocetZaznamovVBloku()+1)*aInfoBlok.getVelkostBloku();
+		fis.close();
 	}
 
 	@Override
 	public void close() throws Exception {
 		aSubor.seek(0);
 		aSubor.write(aInfoBlok.dajBajty());
+		FileOutputStream fos = new FileOutputStream(aBitmapCesta);
 		for (int i = 0; i < aBitPole.dajPocetBlokov(); i++) {
-			aSubor.seek(spocitajAdresuBitPola(i));
-			aSubor.write(aBitPole.dajBlok(i));
+			fos.write(aBitPole.dajBlok(i));
 		}
+		fos.close();
+		//Zapíšeme aj aktualny blok ak je planý
 		if (aBuffer.getAdresaBloku() > 0) {
 			aSubor.seek(aBuffer.getAdresaBloku()*aInfoBlok.getVelkostBloku());
 			aSubor.write(aBuffer.dajBajty());
@@ -153,22 +154,18 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 	private void rozsirSubor() throws IOException {
 		//Nič sme nesašli v bitovom poli => rozšír pole o jeden bitový blok
 		aBitPole.rozsirBlok();
-		aSubor.setLength(spocitajAdresuBitPola(aBitPole.dajPocetBlokov()-1) + 2*aInfoBlok.getVelkostBloku());		
-		aInfoBlok.setPocetBlokov(aInfoBlok.getPocetBlokov()+1);
 		aInfoBlok.setPocetInfoBlokov(aInfoBlok.getPocetInfoBlokov()+1);
-		//Zapís na disk bitový blok
-		aSubor.seek(spocitajAdresuBitPola(aBitPole.dajPocetBlokov()-1));
-		aSubor.write(aBitPole.dajBlok(aBitPole.dajPocetBlokov()-1));
-		aBuffer.nastavAdresuBloku((spocitajAdresuBitPola(aBitPole.dajPocetBlokov()-1) + aInfoBlok.getVelkostBloku())/aInfoBlok.getVelkostBloku());
+		alokujBlok(aPoslednyBlok/2);
+		aBitPole.nastavFlag(aPoslednyBlok+1, true);
+		aBuffer.nastavAdresuBloku(realnyIndexBloku(aPoslednyBlok/2));
 	}
 	
 	private long realnyIndexBloku(long paIndex) {
-		return 2+paIndex+(paIndex/(aBitPole.dajPocetZaznamovVBloku()));
+		return 1+paIndex;
 	}
 	
 	private int relativnyIndexBloku(long paIndex) {
-		int index = (int) Math.ceil((aBitPole.dajPocetZaznamovVBloku()*(paIndex-2))/(double)(aBitPole.dajPocetZaznamovVBloku()+1));
-		return index;
+		return (int) (paIndex-1);
 	}
 
 	private void nacitajBlok(long indexBloku) throws IOException {
@@ -180,6 +177,7 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 	
 	public void ulozBlok() throws IOException {
 		int index = relativnyIndexBloku(aBuffer.getAdresaBloku())*2;
+		
 		if (aBuffer.jePlny()) {
 			aBitPole.nastavFlag(index, true);
 			aBitPole.nastavFlag(index+1, true);
@@ -195,11 +193,12 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 			aPoslednyBlok = (aPoslednyBlok > index) ? index : aPoslednyBlok;
 		}
 		
-		aSubor.seek(aBuffer.getAdresaBloku()*aInfoBlok.getVelkostBloku());
-		aSubor.write(aBuffer.dajBajty());
-		
 		if (aBuffer.jePrazndy() && ((index/2) + 1) == aInfoBlok.getPocetBlokov()) {
 			zmensiSubor(index);
+		}
+		else {
+			aSubor.seek(aBuffer.getAdresaBloku()*aInfoBlok.getVelkostBloku());
+			aSubor.write(aBuffer.dajBajty());
 		}
 			
 	}
@@ -222,7 +221,7 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 			aInfoBlok.setPocetInfoBlokov(pocIndexBlokov);
 		}
 		
-		aSubor.setLength(realnyIndexBloku((poslednyZaznam)/2)*aInfoBlok.getVelkostBloku() + aInfoBlok.getVelkostBloku());
+		aSubor.setLength(aInfoBlok.getPocetBlokov()*aInfoBlok.getVelkostBloku() + aInfoBlok.getVelkostBloku());
 		aBuffer.nastavAdresuBloku(-1);
 	}
 	
