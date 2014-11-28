@@ -5,6 +5,8 @@
  */
 package sk.uniza.fri.duracik2.bstrom;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Unlink
@@ -26,6 +28,7 @@ public class StringovyKluc implements Kluc {
 
 	@Override
 	public void serializuj(byte[] stream) {
+		Arrays.fill(stream, (byte)0);
 		byte [] temp = aString.getBytes();
 		System.arraycopy(temp, 0, stream, 0, Math.min(stream.length, temp.length));
 	}
@@ -44,5 +47,12 @@ public class StringovyKluc implements Kluc {
 	public int compareTo(Kluc o) {
 		return aString.compareTo(((StringovyKluc)o).aString);
 	}
+
+	@Override
+	public String toString() {
+		return aString;
+	}
+	
+	
 	
 }

@@ -50,14 +50,12 @@ public class BStrom implements AutoCloseable {
 		}
 		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getKoren());
 		LinkedList<Blok> bloky = new LinkedList<>();
-		if (uzol.jeList()) {
-			bloky.add(aSubor.dajBlok().naklonuj());
-		}
 		while (!uzol.jeList()) {
 			bloky.add(aSubor.dajBlok().naklonuj());
 			long addresa = uzol.dalsiaAdresa(kluc);
 			uzol = aSubor.dajZaznam(addresa);
 		}
+		bloky.add(aSubor.dajBlok().naklonuj());
 		if (uzol.dajAdresuKluca(kluc) != -1) {
 			throw new DuplikatnyPrvokException();
 		}
@@ -77,17 +75,18 @@ public class BStrom implements AutoCloseable {
 			Kluc k = uzol.rozdelList(paZaznam, novy);
 			aSubor.ulozBlok();
 			uzol.setAddr(novy.dajAdresu());
-			aSubor.nastavBlok(bloky.pop());
+			aSubor.nastavBlok(bloky.removeLast());
 			aSubor.ulozBlok();
 			BStromZaznam bz = new BStromZaznam(k, novy.dajAdresu());
 			while (!bloky.isEmpty()) {
-				Blok b = bloky.pop();
+				Blok b = bloky.removeLast();
 				uzol = (Uzol) b.dajZaznam(0);
 				if (uzol.maMiesto()) {
 					uzol.vloz(bz);
 					aSubor.nastavBlok(b);
 					aSubor.ulozBlok();
 					bz = null;
+					break;
 				}
 				else {
 					novy = aSubor.dajVolnyZaznam();
@@ -121,6 +120,22 @@ public class BStrom implements AutoCloseable {
 		koren.nastavValiditu(true);
 		aSubor.ulozBlok();
 		aInfoBlok.setKoren(koren.dajAdresu());
+	}
+	
+	public void inOrderVypis() throws IOException {
+		if (aInfoBlok.getKoren() == -1) {
+			return;
+		}
+		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getKoren());
+		while (!uzol.jeList()) {
+			long addresa = uzol.getAddr();
+			uzol = aSubor.dajZaznam(addresa);
+		}
+		System.out.println(uzol);
+		while (uzol.getAddr() > 0) {
+			uzol = aSubor.dajZaznam(uzol.getAddr());
+			System.out.println(uzol);
+		}
 	}
 	
 }

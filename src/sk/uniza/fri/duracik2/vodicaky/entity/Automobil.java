@@ -43,13 +43,13 @@ public class Automobil extends AZaznam {
 
 	@Override
 	public int dajVelkost() {
-		return 7*2
-			+ 17*2
-			+ 2
-			+ 4
-			+ 1
-			+ 8
-			+ 8;
+		return 7*2 //EVC
+			+ 17*2 //Vin
+			+ 2	   //Pocet naprav
+			+ 4    //hmotnost
+			+ 1    //V patrani
+			+ 8	   //Datum1
+			+ 8;   //Datum 2
 	}
 
 	@Override
@@ -75,10 +75,10 @@ public class Automobil extends AZaznam {
 
 	@Override
 	public void serializuj(DataOutputStream stream) {
-		try {
+		try {			
 			byte [] buff = new byte[7*2];
 			byte [] temp = aEvcVozidla.getBytes();
-			System.arraycopy(temp, 0, buff, 0, Math.min(buff.length, temp.length));
+			System.arraycopy(temp, 0, buff, 0, Math.min(buff.length, temp.length));	
 			stream.write(buff);
 			buff = new byte[17*2];
 			temp = aVinCislo.getBytes();

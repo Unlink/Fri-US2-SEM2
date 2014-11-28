@@ -64,6 +64,7 @@ public class Uzol extends AZaznam {
 		try {
 			aJeList = paStream.readBoolean();
 			aPocetPlatnychKlucov = paStream.readInt();
+			aAddr = paStream.readLong();
 			byte[] buffer = new byte[aVelkostKluca];
 			for (int i = 0; i < aPocetKlucov; i++) {
 				paStream.read(buffer);
@@ -85,6 +86,7 @@ public class Uzol extends AZaznam {
 		try {
 			stream.writeBoolean(aJeList);
 			stream.writeInt(aPocetPlatnychKlucov);
+			stream.writeLong(aAddr);
 			byte[] buffer = new byte[aVelkostKluca];
 			for (BStromZaznam k : aKluce) {
 				k.getKluc().serializuj(buffer);
@@ -151,15 +153,7 @@ public class Uzol extends AZaznam {
 	}
 
 	public Kluc rozdelList(BStromZaznam paZaznam, Uzol novy) {
-		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
-			if (paZaznam.getKluc().compareTo(aKluce.get(i).getKluc()) < 0) {
-				aKluce.add(i, paZaznam);
-				break;
-			}
-		}
-		if (aKluce.size() == aPocetKlucov) {
-			aKluce.add(paZaznam);
-		}
+		zaradZotriedene(paZaznam);
 		
 		aPocetPlatnychKlucov = (aPocetKlucov/2)+1;
 		for (int i=aPocetPlatnychKlucov; i<=aPocetKlucov; i++) {
@@ -187,12 +181,7 @@ public class Uzol extends AZaznam {
 	
 
 	public Kluc rozdelVnutornyUzol(BStromZaznam paZaznam, Uzol novy) {
-		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
-			if (paZaznam.getKluc().compareTo(aKluce.get(i).getKluc()) < 0) {
-				aKluce.add(i, paZaznam);
-				break;
-			}
-		}
+		zaradZotriedene(paZaznam);
 		
 		aPocetPlatnychKlucov = (aPocetKlucov/2);
 		for (int i=(aPocetKlucov/2)+1; i<=aPocetKlucov; i++) {
@@ -205,12 +194,36 @@ public class Uzol extends AZaznam {
 		return aKluce.get(aPocetPlatnychKlucov).getKluc();
 	}
 
+	private void zaradZotriedene(BStromZaznam paZaznam) {
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (paZaznam.getKluc().compareTo(aKluce.get(i).getKluc()) < 0) {
+				aKluce.add(i, paZaznam);
+				break;
+			}
+		}
+		if (aKluce.size() == aPocetKlucov) {
+			aKluce.add(paZaznam);
+		}
+	}
+
 	@Override
 	public void nastavValiditu(boolean paValidita) {
 		super.nastavValiditu(paValidita);
 		if (!paValidita) {
 			aPocetPlatnychKlucov = 0;
+			aAddr = -1;
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("List: ").append(aJeList).append("\n");
+		sb.append("Speciala adresa: ").append(aAddr).append("\n");;
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			sb.append(aKluce.get(i)).append("\n");
+		}
+		return sb.toString();
 	}
 	
 	

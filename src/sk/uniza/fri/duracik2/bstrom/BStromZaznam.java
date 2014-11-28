@@ -33,6 +33,12 @@ public class BStromZaznam {
 	public void setAdresa(long aAdresa) {
 		this.aAdresa = aAdresa;
 	}
+
+	@Override
+	public String toString() {
+		return aKluc + "=" + aAdresa;
+	}
+	
 	
 	
 }
