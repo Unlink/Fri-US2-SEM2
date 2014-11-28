@@ -98,10 +98,10 @@ public class Main {
 			test.ulozBlok();*/
 			//System.out.println("Adresa noveho recordu "+record.dajAdresu());
 			
-			Automobil record = test.dajVolnyZaznam();
+			/*Automobil record = test.dajVolnyZaznam();
 			record.setEvcVozidla("ZA000AB");
 			record.nastavValiditu(true);
-			test.ulozBlok();
+			test.ulozBlok();*/
 			
 			System.out.println(test.toString());
 			
