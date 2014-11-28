@@ -6,15 +6,10 @@
 package sk.uniza.fri.duracik2.vodicaky;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import sk.uniza.fri.duracik2.blockfile.AZaznam;
 import sk.uniza.fri.duracik2.blockfile.BinarnySubor;
 import sk.uniza.fri.duracik2.blockfile.IZaznam;
 import sk.uniza.fri.duracik2.vodicaky.entity.Automobil;
@@ -62,12 +57,12 @@ public class Main {
 				record.nastavValiditu(false);
 				test.ulozBlok();
 				testData2.remove(entrySet.getKey());
-				if (x++ > 30000) {
+				if (x++ > 60000) {
 					break;
 				}
 			}
 			
-			for (int i = 0; i < 30000; i++) {
+			for (int i = 0; i < 60000; i++) {
 				Automobil record = test.dajVolnyZaznam();
 				record.setEvcVozidla(randomString(7).toUpperCase());
 				record.nastavValiditu(true);
@@ -95,6 +90,12 @@ public class Main {
 			
 			
  			Automobil record = test.dajVolnyZaznam();
+			record.setEvcVozidla(randomString(7).toUpperCase());
+			record.nastavValiditu(true);
+			test.ulozBlok();
+			long auto = record.dajAdresu();
+			record.nastavValiditu(false);
+			test.ulozBlok();
 			System.out.println("Adresa noveho recordu "+record.dajAdresu());
 			
 			/*

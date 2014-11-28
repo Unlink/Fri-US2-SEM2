@@ -208,7 +208,7 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 		int poslednyZaznam = paIndex;
 		int zmazanych = 0;
 		
-		for (; poslednyZaznam > 0 && !aBitPole.dajFlag(poslednyZaznam); poslednyZaznam-= 2) {
+		for (; poslednyZaznam >= 0 && !aBitPole.dajFlag(poslednyZaznam); poslednyZaznam-= 2) {
 			zmazanych++;
 			aBitPole.nastavFlag(poslednyZaznam, false);
 			aBitPole.nastavFlag(poslednyZaznam+1, false);
