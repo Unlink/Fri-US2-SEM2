@@ -270,7 +270,7 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		/*StringBuilder sb = new StringBuilder();
 		sb.append("Súbor: ").append(aCesta.getAbsolutePath()).append("\n");
 		sb.append("Pocet bitblokov: ").append(aInfoBlok.getPocetInfoBlokov()).append("\n");
 		sb.append("Pocet blokov: ").append(aInfoBlok.getPocetBlokov()).append("\n");
@@ -283,7 +283,8 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 				sb.append(ex.getMessage());
 			}
 		}
-		return sb.toString();
+		return sb.toString();*/
+		return "";
 	}
 	
 	
