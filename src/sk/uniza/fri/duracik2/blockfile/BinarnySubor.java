@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,12 +30,34 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 	private BlokoveBitovePole aBitPole;
 	private int aPoslednyBlok;
 	
+	/*public BinarnySubor(Class<T> paZaznam, int paPocetZaznamov, File paSubor) throws IOException, InstantiationException, IllegalAccessException {
+		IZaznam[] zaznamy = (IZaznam[]) Array.newInstance(paZaznam, paPocetZaznamov);
+		for (int i=0; i<paPocetZaznamov; i++) {
+			zaznamy[i] = paZaznam.newInstance();
+		}
+		aBuffer = new Blok(zaznamy);
+		inicializujSubor(paSubor, -1);
+	}*/
+	
+	public BinarnySubor(IZaznam paZaznam, int paPocetZaznamov, File paSubor) throws IOException, InstantiationException, IllegalAccessException {
+		IZaznam[] zaznamy = (IZaznam[]) Array.newInstance(paZaznam.getClass(), paPocetZaznamov);
+		for (int i=0; i<paPocetZaznamov; i++) {
+			zaznamy[i] = paZaznam.naklonuj();
+		}
+		aBuffer = new Blok(zaznamy);
+		inicializujSubor(paSubor, -1);
+	}
+	
 	public BinarnySubor(List<IZaznam> paStruktura, File paSubor) throws IOException {
 		this(paStruktura, paSubor, -1);
 	}
 	
 	public BinarnySubor(List<IZaznam> paStruktura, File paSubor, int paVelkostBloku) throws IOException {
 		aBuffer = new Blok(paStruktura.toArray(new IZaznam[paStruktura.size()]));
+		inicializujSubor(paSubor, paVelkostBloku);
+	}
+
+	private void inicializujSubor(File paSubor, int paVelkostBloku) throws IOException {
 		aCesta = paSubor;
 		aBitmapCesta = new File(paSubor.getAbsolutePath()+".bitmap");
 		paVelkostBloku = (paVelkostBloku < 0) ? aBuffer.getVelkost() : paVelkostBloku;

@@ -20,13 +20,8 @@ import sk.uniza.fri.duracik2.vodicaky.entity.Automobil;
  */
 public class Main {
 	public static void main(String[] args) {
-		List<IZaznam> strukturaBloku = new ArrayList<>();
-		strukturaBloku.add(new Automobil());
-		strukturaBloku.add(new Automobil());
-		strukturaBloku.add(new Automobil());
-		strukturaBloku.add(new Automobil());
 		try(
-			BinarnySubor<Automobil> test = new BinarnySubor<>(strukturaBloku, new File("testSubor.bin"))
+			BinarnySubor<Automobil> test = new BinarnySubor<>(new Automobil(), 4, new File("testSubor.bin"))
 		) {
 			/*HashMap<String, Long> testData = new HashMap<>();
 			HashMap<String, Long> testData2 = new HashMap<>();
