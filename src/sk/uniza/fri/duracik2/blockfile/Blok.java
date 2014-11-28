@@ -159,4 +159,20 @@ class Blok implements Cloneable {
 	public static int dajIndexZaznamu(long paAdresa) {
 		return (int)(paAdresa & 0xFF);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Blok - " + aAdresaBloku+ "\n");
+		for (int i = 0; i < aZaznamy.length; i++) {
+			if (aZaznamy[i].jeValidny()) {
+				sb.append(i).append(": ").append(aZaznamy[i].toString()).append("\n");
+			}
+			else {
+				sb.append(i).append(": ").append("Neplatny").append("\n");
+			}
+		}
+		return sb.toString();
+	}
+	
+	
 }
