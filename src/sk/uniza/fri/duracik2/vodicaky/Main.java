@@ -28,7 +28,7 @@ public class Main {
 		try(
 			BinarnySubor<Automobil> test = new BinarnySubor<>(strukturaBloku, new File("testSubor.bin"))
 		) {
-			HashMap<String, Long> testData = new HashMap<>();
+			/*HashMap<String, Long> testData = new HashMap<>();
 			HashMap<String, Long> testData2 = new HashMap<>();
 			for (int i = 0; i < 100000; i++) {
 				Automobil record = test.dajVolnyZaznam();
@@ -96,7 +96,9 @@ public class Main {
 			/*long auto = record.dajAdresu();
 			record.nastavValiditu(false);
 			test.ulozBlok();*/
-			System.out.println("Adresa noveho recordu "+record.dajAdresu());
+			//System.out.println("Adresa noveho recordu "+record.dajAdresu());
+			
+			//System.out.println(test.toString());
 			
 			/*
 			record = test.dajVolnyZaznam();

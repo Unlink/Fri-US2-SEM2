@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -224,5 +226,25 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 		aSubor.setLength(aInfoBlok.getPocetBlokov()*aInfoBlok.getVelkostBloku() + aInfoBlok.getVelkostBloku());
 		aBuffer.nastavAdresuBloku(-1);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Súbor: ").append(aCesta.getAbsolutePath()).append("\n");
+		sb.append("Pocet bitblokov: ").append(aInfoBlok.getPocetInfoBlokov()).append("\n");
+		sb.append("Pocet blokov: ").append(aInfoBlok.getPocetBlokov()).append("\n");
+		for (int i=0; i<aInfoBlok.getPocetBlokov(); i++) {
+			try {
+				nacitajBlok(realnyIndexBloku(i));
+				sb.append(aBuffer.toString());
+			}
+			catch (IOException ex) {
+				sb.append(ex.getMessage());
+			}
+		}
+		return sb.toString();
+	}
+	
+	
 	
 }

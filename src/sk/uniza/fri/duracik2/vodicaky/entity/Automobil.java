@@ -166,5 +166,10 @@ public class Automobil extends AZaznam {
 	public void setKonciecEk(Date aKonciecEk) {
 		this.aKonciecEk = aKonciecEk;
 	}
+
+	@Override
+	public String toString() {
+		return "Automobil{" + "aEvcVozidla=" + aEvcVozidla + ", aVinCislo=" + aVinCislo + '}';
+	}
 	
 }
