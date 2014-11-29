@@ -385,4 +385,10 @@ public class Uzol extends AZaznam {
 	public boolean jePrazdny() {
 		return aPocetPlatnychKlucov==0;
 	}
+
+	public long dajPoslednuAdresu() {
+		if (aPocetPlatnychKlucov == 0 && !jeList())
+			return aAddr;
+		return aKluce.get(aPocetPlatnychKlucov-1).getAdresa();
+	}
 }
