@@ -16,7 +16,7 @@ import sk.uniza.fri.duracik2.blockfile.Blok;
  * @author Unlink
  */
 public class BStrom implements AutoCloseable {
-	
+
 	private BinarnySubor<Uzol> aSubor;
 	private BStromInfoBlok aInfoBlok;
 	private int aStupen;
@@ -24,7 +24,7 @@ public class BStrom implements AutoCloseable {
 	public BStrom(File aCesta, Kluc paSampleKey, int paStupen) throws IOException, InstantiationException, IllegalAccessException {
 		aInfoBlok = new BStromInfoBlok();
 		aStupen = paStupen;
-		Uzol uzol = new Uzol(paSampleKey, aStupen-1, true);
+		Uzol uzol = new Uzol(paSampleKey, aStupen - 1, true);
 		aSubor = new BinarnySubor<>(uzol, 1, aCesta, aInfoBlok);
 	}
 
@@ -32,7 +32,7 @@ public class BStrom implements AutoCloseable {
 	public void close() throws Exception {
 		aSubor.close();
 	}
-	
+
 	public long najdi(Kluc paKluc) throws IOException {
 		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getKoren());
 		while (!uzol.jeList()) {
@@ -41,28 +41,22 @@ public class BStrom implements AutoCloseable {
 		}
 		return uzol.dajAdresuKluca(paKluc);
 	}
-	
+
 	public void vloz(BStromZaznam paZaznam) throws IOException {
 		Kluc kluc = paZaznam.getKluc();
 		if (aInfoBlok.getKoren() == -1) {
 			vlozNovyKoren(paZaznam);
 			return;
 		}
-		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getKoren());
-		LinkedList<Blok> bloky = new LinkedList<>();
-		while (!uzol.jeList()) {
-			bloky.add(aSubor.dajBlok().naklonuj());
-			long addresa = uzol.dalsiaAdresa(kluc);
-			uzol = aSubor.dajZaznam(addresa);
-		}
-		bloky.add(aSubor.dajBlok().naklonuj());
-		if (uzol.dajAdresuKluca(kluc) != -1) {
+		LinkedList<Blok> bloky = traverzujStrom(kluc);
+		Uzol uzol = (Uzol) bloky.getLast().dajZaznam(0);
+		if (uzol.dajAdresuKluca(kluc) != Uzol.KLUC_NENAJDENY) {
 			throw new DuplikatnyPrvokException();
 		}
-		
+
 		//znovu nacitanie zo suboru
 		uzol = aSubor.dajZaznam(uzol.dajAdresu());
-		
+
 		if (uzol.maMiesto()) {
 			uzol.vloz(paZaznam);
 			aSubor.ulozBlok();
@@ -110,7 +104,62 @@ public class BStrom implements AutoCloseable {
 				aInfoBlok.setKoren(novyKoren.dajAdresu());
 			}
 		}
+
+	}
+
+	public long vymaz(Kluc kluc) throws IOException {
+		if (aInfoBlok.getKoren() == -1) {
+			return -5;
+		}
+		LinkedList<Blok> bloky = traverzujStrom(kluc);
+		Uzol uzol = (Uzol) bloky.getLast().dajZaznam(0);
+		long adresaKluca = uzol.dajAdresuKluca(kluc);
+		if (adresaKluca == Uzol.KLUC_NENAJDENY) {
+			return -1;
+		}
+
+		//Ak je v liste dosť prvkov, tak zmažeme a koniec
+		if (uzol.dajAdresu() == aInfoBlok.getKoren() || uzol.maDostatokPrvkov()) {
+			BStromZaznam zaznam = uzol.odoberKlucZListu(kluc);
+			//Ak sme vyprazdnili koreň
+			if (uzol.dajAdresu() == aInfoBlok.getKoren() && uzol.getPocetPlatnychKlucov() == 0) {
+				zmazKoren(bloky.removeLast());
+				return adresaKluca;
+			}
+			else {
+				aSubor.nastavBlok(bloky.removeLast());
+				aSubor.ulozBlok();
+			}
+			if (zaznam != null) {
+				zmenKluce(bloky, zaznam, kluc);
+			}
+			return adresaKluca;
+		}
 		
+		
+		
+		return 1;
+	}
+
+	private void zmazKoren(Blok blok) throws IOException {
+		Uzol uzol = (Uzol) blok.dajZaznam(0);
+		aInfoBlok.setKoren(-1);
+		aInfoBlok.setZacUtriedeneho(-1);
+		uzol.nastavValiditu(false);
+		aSubor.nastavBlok(blok);
+		aSubor.ulozBlok();
+	}
+
+	private LinkedList<Blok> traverzujStrom(Kluc kluc) throws IOException {
+		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getKoren());
+		LinkedList<Blok> bloky = new LinkedList<>();
+		while (!uzol.jeList()) {
+			bloky.add(aSubor.dajBlok().naklonuj());
+			long addresa = uzol.dalsiaAdresa(kluc);
+			uzol = aSubor.dajZaznam(addresa);
+		}
+		bloky.add(aSubor.dajBlok().naklonuj());
+		return bloky;
 	}
 
 	private void vlozNovyKoren(BStromZaznam paZaznam) throws IOException {
@@ -120,22 +169,30 @@ public class BStrom implements AutoCloseable {
 		koren.nastavValiditu(true);
 		aSubor.ulozBlok();
 		aInfoBlok.setKoren(koren.dajAdresu());
+		aInfoBlok.setZacUtriedeneho(koren.dajAdresu());
 	}
-	
+
 	public void inOrderVypis() throws IOException {
 		if (aInfoBlok.getKoren() == -1) {
 			return;
 		}
-		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getKoren());
-		while (!uzol.jeList()) {
-			long addresa = uzol.getAddr();
-			uzol = aSubor.dajZaznam(addresa);
-		}
+		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getZacUtriedeneho());
 		System.out.println(uzol);
 		while (uzol.getAddr() > 0) {
 			uzol = aSubor.dajZaznam(uzol.getAddr());
 			System.out.println(uzol);
 		}
 	}
-	
+
+	private void zmenKluce(LinkedList<Blok> bloky, BStromZaznam zaznam, Kluc kluc) throws IOException {
+		while (bloky.size() > 0) {
+			Blok blok = bloky.removeLast();
+			Uzol uzol = (Uzol) blok.dajZaznam(0);
+			if (uzol.nahradKluc(kluc, zaznam.getKluc())) {
+				aSubor.nastavBlok(blok);
+				aSubor.ulozBlok();
+			}
+		}
+	}
+
 }

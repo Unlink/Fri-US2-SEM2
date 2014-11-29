@@ -17,6 +17,8 @@ import sk.uniza.fri.duracik2.blockfile.IZaznam;
  * @author Unlink
  */
 public class Uzol extends AZaznam {
+	public static final int KLUC_NENAJDENY = -465;
+	
 	private int aPocetKlucov;
 	private int aVelkostKluca;
 	private ArrayList<BStromZaznam> aKluce;
@@ -127,11 +129,38 @@ public class Uzol extends AZaznam {
 			if (paKluc.compareTo(aKluce.get(i).getKluc()) == 0)
 				return aKluce.get(i).getAdresa();
 		}
-		return -1;
+		return KLUC_NENAJDENY;
 	}
 
 	public boolean maMiesto() {
 		return aPocetPlatnychKlucov < aPocetKlucov;
+	}
+	
+	public boolean maDostatokPrvkov() {
+		return aPocetPlatnychKlucov > (aPocetKlucov/2);
+	}
+	
+	/**
+	 * 
+	 * @param paKluc
+	 * @return predchádzajúci záznam, ak sme zmazali posledný
+	 */
+	public BStromZaznam odoberKlucZListu(Kluc paKluc) {
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (paKluc.compareTo(aKluce.get(i).getKluc()) == 0) {
+				aKluce.remove(i);
+				//Zmazal som posledný
+				if ((aPocetPlatnychKlucov-1) == i && i > 0) {
+					aPocetPlatnychKlucov--;
+					return aKluce.get(i-1);
+				}
+				else {
+					aPocetPlatnychKlucov--;
+					return null;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public void vloz(BStromZaznam zaznam) {
@@ -177,7 +206,10 @@ public class Uzol extends AZaznam {
 	public void setJeList(boolean aJeList) {
 		this.aJeList = aJeList;
 	}
-	
+
+	public int getPocetPlatnychKlucov() {
+		return aPocetPlatnychKlucov;
+	}
 	
 
 	public Kluc rozdelVnutornyUzol(BStromZaznam paZaznam, Uzol novy) {
@@ -224,6 +256,16 @@ public class Uzol extends AZaznam {
 			sb.append(aKluce.get(i)).append("\n");
 		}
 		return sb.toString();
+	}
+
+	public boolean nahradKluc(Kluc kluc, Kluc nahrada) {
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getKluc().compareTo(kluc) == 0) {
+				aKluce.get(i).setKluc(nahrada.naklonuj());
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	

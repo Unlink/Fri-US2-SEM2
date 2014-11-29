@@ -19,6 +19,7 @@ import sk.uniza.fri.duracik2.blockfile.InfoBlok;
 public class BStromInfoBlok extends InfoBlok {
 
 	private long aKoren;
+	private long aZacUtriedeneho;
 
 	@Override
 	public byte[] dajBajty() {		
@@ -26,6 +27,7 @@ public class BStromInfoBlok extends InfoBlok {
 		DataOutputStream output = new DataOutputStream(byteArrayOutputStream);
 		try {
 			output.writeLong(aKoren);
+			output.writeLong(aZacUtriedeneho);
 			output.write(super.dajBajty());
 		}
 		catch (IOException ex) {
@@ -37,12 +39,14 @@ public class BStromInfoBlok extends InfoBlok {
 	public void inicializuj(int paVelksotBloku) {
 		super.inicializuj(paVelksotBloku);
 		aKoren = -1;
+		aZacUtriedeneho = -1;
 	}
 
 	@Override
 	public void deserializuj(byte[] data) {
-		super.deserializuj(Arrays.copyOfRange(data, 8, data.length));
+		super.deserializuj(Arrays.copyOfRange(data, 16, data.length));
 		aKoren = ByteBuffer.wrap(data, 0, 8).getLong();
+		aZacUtriedeneho  = ByteBuffer.wrap(data, 8, 8).getLong();
 	}
 	
 	public long getKoren() {
@@ -52,5 +56,15 @@ public class BStromInfoBlok extends InfoBlok {
 	public void setKoren(long aKoren) {
 		this.aKoren = aKoren;
 	}
+
+	public long getZacUtriedeneho() {
+		return aZacUtriedeneho;
+	}
+
+	public void setZacUtriedeneho(long aZacUtriedeneho) {
+		this.aZacUtriedeneho = aZacUtriedeneho;
+	}
+	
+	
 	
 }
