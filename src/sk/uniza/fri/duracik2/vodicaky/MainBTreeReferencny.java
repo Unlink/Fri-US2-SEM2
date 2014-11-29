@@ -18,8 +18,7 @@ import sk.uniza.fri.duracik2.bstrom.IntovyKluc;
  *
  * @author Unlink
  */
-public class MainBStrom {
-
+public class MainBTreeReferencny {
 	public static void vloz(BStrom s, int k) throws IOException {
 		s.vloz(new BStromZaznam(new IntovyKluc(k), k));
 	}
@@ -29,13 +28,11 @@ public class MainBStrom {
 	}
 
 	public static void main(String[] args) {
-		//new File("dakyStrom.bin").delete();
-		//new File("dakyStrom.bin.bitmap").delete();
+		new File("dakyStrom.bin").delete();
+		new File("dakyStrom.bin.bitmap").delete();
 
-		//try (BStrom strom = new BStrom(new File("dakyStrom.bin"), new StringovyKluc(((char) 0xFF)+"", 8), 3))
-		try (BStrom strom = new BStrom(new File("dakyStrom.bin"), new IntovyKluc(0), 50)) {
-
-			int numbers = 50000;
+		try (BStrom strom = new BStrom(new File("dakyStrom.bin"), new IntovyKluc(0), 3)) {
+			int numbers = 1000;
 
 			List<Integer> ints = new ArrayList<>(numbers);
 			for (int i = 0; i < numbers; i++) {

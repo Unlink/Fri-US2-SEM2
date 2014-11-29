@@ -109,7 +109,7 @@ public class BStrom implements AutoCloseable {
 
 	public long vymaz(Kluc kluc) throws IOException {
 		if (aInfoBlok.getKoren() == -1) {
-			return -5;
+			return -1;
 		}
 		LinkedList<Blok> bloky = traverzujStrom(kluc);
 		Blok aktual = bloky.removeLast();
@@ -141,29 +141,38 @@ public class BStrom implements AutoCloseable {
 		while (uzol.dajAdresu() != aInfoBlok.getKoren() && uzol.getPocetPlatnychKlucov() < aStupen/2) {
 			BStromZaznam zaznam;
 			Uzol otec = (Uzol) bloky.getLast().dajZaznam(0);
-			Kluc maxKluc = (uzol.jeList() && uzol.jePrazdny()) ? kluc : najdiMaximalnyKluc(uzol);
 			BlokHolder lavyBrat = new BlokHolder(null);
-			zaznam = zoberZlaveho(maxKluc, otec, lavyBrat);
+			zaznam = zoberZlaveho(uzol.dajAdresu(), otec, lavyBrat);
 			if (zaznam != null) {
 				Kluc k = ((Uzol)lavyBrat.getBlok().dajZaznam(0)).dajMaximalnyKluc();
-				//BStromZaznam novy = new BStromZaznam(k.naklonuj(), zaznam.getAdresa());
-				uzol.zaradAkoMinimalny(zaznam);
-				otec.nahradKluc(zaznam.getKluc().naklonuj(), k);
+				if (uzol.jeList()) {
+					uzol.zaradAkoMinimalny(zaznam);
+					otec.nahradKluc(zaznam.getKluc().naklonuj(), k);
+				}
+				else {
+					BStromZaznam novy = new BStromZaznam(najdiMaximalnyKluc(zaznam.getAdresa()), zaznam.getAdresa());
+					uzol.zaradAkoMinimalny(novy);
+					otec.nahradKluc(novy.getKluc().naklonuj(), zaznam.getKluc());
+				}
 				//otec.nahradKluc(otec.dajNasledujuciKluc(k).naklonuj(), uzol.dajMaximalnyKluc());
 				aSubor.nastavBlok(aktual);
 				aSubor.ulozBlok();
 				aSubor.nastavBlok(bloky.getLast());
 				aSubor.ulozBlok();
-				zmenKluce(bloky, zaznam.getKluc().naklonuj(), kluc);
+				zmenKluce(bloky, uzol.dajMaximalnyKluc().naklonuj(), kluc);
 				return adresaKluca;
 			}
 			BlokHolder pravyBrat = new BlokHolder(null);
-			zaznam = zoberZPraveho(maxKluc, otec, pravyBrat);
+			zaznam = zoberZPraveho(uzol.dajAdresu(), otec, pravyBrat);
 			if (zaznam != null) {
-				Kluc k = otec.dajPredchadzajuciKluc(zaznam.getKluc());
-				//BStromZaznam novy = new BStromZaznam(k.naklonuj(), zaznam.getAdresa());
-				uzol.zaradAkoMaximalny(zaznam);
-				otec.nahradKluc(k, zaznam.getKluc().naklonuj());
+				//Kluc k = otec.dajPredchadzajuciKluc(zaznam.getKluc());
+				if (uzol.jeList())
+					uzol.zaradAkoMaximalny(zaznam);
+				else {
+					BStromZaznam novy = new BStromZaznam(najdiMaximalnyKluc(uzol).naklonuj(), zaznam.getAdresa());
+					uzol.zaradAkoMaximalny(novy);
+				}
+				otec.nahradKluc(uzol.dajAdresu(), zaznam.getKluc().naklonuj());
 				aSubor.nastavBlok(aktual);
 				aSubor.ulozBlok();
 				aSubor.nastavBlok(bloky.getLast());
@@ -174,15 +183,16 @@ public class BStrom implements AutoCloseable {
 			//Ak sa nepodarilo zobrať z bratov, tak spojime bloky
 			if (lavyBrat.getBlok() != null) {
 				Uzol brat = (Uzol) lavyBrat.getBlok().dajZaznam(0);
-				Kluc k = (brat.jeList() && brat.jePrazdny()) ? kluc : najdiMaximalnyKluc(brat);
+				Kluc k = najdiMaximalnyKluc(brat);
 				brat.spojBloky(uzol);
 				if (uzol.jeList()) {
-					otec.vymaz(k);
-					zmenKluce(bloky, k, kluc);
+					otec.vymaz(uzol.dajAdresu());
+					zmenKluce(bloky, brat.dajMaximalnyKluc(), kluc);
 				}
 				else {
+					
 					brat.vloz(new BStromZaznam(k.naklonuj(), uzol.getAddr()));
-					otec.vymaz(k);
+					otec.vymaz(uzol.dajAdresu());
 				}
 				//Uloženie brata
 				aSubor.nastavBlok(lavyBrat.getBlok());
@@ -197,15 +207,15 @@ public class BStrom implements AutoCloseable {
 			}
 			else if (pravyBrat.getBlok() != null) {
 				Uzol brat = (Uzol) pravyBrat.getBlok().dajZaznam(0);
-				Kluc k = (uzol.jeList() && uzol.jePrazdny()) ? kluc : najdiMaximalnyKluc(uzol);
+				Kluc k = (uzol.jeList()) ? kluc : najdiMaximalnyKluc(uzol);
 				uzol.spojBloky(brat);
 				if (uzol.jeList()) {
-					otec.vymaz(k);
+					otec.vymaz(brat.dajAdresu());
 					//zmenKluce(bloky, k, kluc);
 				}
 				else {
 					uzol.vloz(new BStromZaznam(k.naklonuj(), brat.getAddr()));
-					otec.vymaz(k);
+					otec.vymaz(brat.dajAdresu());
 				}
 				//Uloženie uzla
 				aSubor.nastavBlok(aktual);
@@ -286,8 +296,8 @@ public class BStrom implements AutoCloseable {
 		}
 	}
 
-	private BStromZaznam zoberZlaveho(Kluc paDajMaximalnyKluc, Uzol paOtec, BlokHolder paHolder) throws IOException {
-		long addr = paOtec.dajLavehoBrata(paDajMaximalnyKluc);
+	private BStromZaznam zoberZlaveho(long adresa, Uzol paOtec, BlokHolder paHolder) throws IOException {
+		long addr = paOtec.dajLavehoBrata(adresa);
 		if (addr < 0) {
 			return null;
 		}
@@ -300,8 +310,8 @@ public class BStrom implements AutoCloseable {
 		return zaznam;
 	}
 
-	private BStromZaznam zoberZPraveho(Kluc paDajMaximalnyKluc, Uzol paOtec, BlokHolder paHolder) throws IOException {
-		long addr = paOtec.dajPravehoBrata(paDajMaximalnyKluc);
+	private BStromZaznam zoberZPraveho(long adresa, Uzol paOtec, BlokHolder paHolder) throws IOException {
+		long addr = paOtec.dajPravehoBrata(adresa);
 		if (addr < 0) {
 			return null;
 		}
@@ -322,4 +332,8 @@ public class BStrom implements AutoCloseable {
 		return paUzol.dajMaximalnyKluc();
 	}
 
+	private Kluc najdiMaximalnyKluc(long addr) throws IOException {
+		Uzol paUzol = aSubor.dajZaznam(addr);
+		return najdiMaximalnyKluc(paUzol);
+	}
 }

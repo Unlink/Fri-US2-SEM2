@@ -269,6 +269,20 @@ public class Uzol extends AZaznam {
 		return false;
 	}
 	
+	public boolean nahradKluc(long addr, Kluc nahrada) {
+		if (addr == aAddr) {
+			aKluce.get(0).setKluc(nahrada);
+			return true;
+		} 
+		for (int i = 0; i < aPocetPlatnychKlucov-1; i++) {
+			if (aKluce.get(i).getAdresa() == addr) {
+				aKluce.get(i+1).setKluc(nahrada.naklonuj());
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public Kluc dajMaximalnyKluc() {
 		return aKluce.get(aPocetPlatnychKlucov-1).getKluc().naklonuj();
 	}
@@ -293,29 +307,29 @@ public class Uzol extends AZaznam {
 		aPocetPlatnychKlucov++;
 	}
 
-	public long dajLavehoBrata(Kluc kluc) {
-		if (aKluce.get(0).getKluc().compareTo(kluc) >= 0) {
+	public long dajLavehoBrata(long adresa) {
+		if (adresa == aAddr) {
 			return -1;
 		}
-		for (int i = 1; i < aPocetPlatnychKlucov; i++) {
-			if (aKluce.get(i).getKluc().compareTo(kluc) >= 0) {
-				if (i == 1)
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getAdresa() == adresa) {
+				if (i == 0)
 					return aAddr;
 				else {
-					return aKluce.get(i-2).getAdresa();
+					return aKluce.get(i-1).getAdresa();
 				}
 			}
 		}
-		if (aPocetPlatnychKlucov == 1) {
-			return aAddr;
-		}
-		return aKluce.get(aPocetPlatnychKlucov-2).getAdresa();
+		return -1;
 	}
 	
-	public long dajPravehoBrata(Kluc kluc) {
-		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
-			if (aKluce.get(i).getKluc().compareTo(kluc) >= 0) {
-				return aKluce.get(i).getAdresa();
+	public long dajPravehoBrata(long adresa) {
+		if (adresa == aAddr && aPocetPlatnychKlucov > 0) {
+			return aKluce.get(0).getAdresa();
+		}
+		for (int i = 0; i < aPocetPlatnychKlucov-1; i++) {
+			if (aKluce.get(i).getAdresa() == adresa) {
+				return aKluce.get(i+1).getAdresa();
 			}
 		}
 		return -1;
@@ -375,6 +389,17 @@ public class Uzol extends AZaznam {
 		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
 			if (aKluce.get(i).getKluc().compareTo(paKluc) == 0) {
 				aKluce.add(new BStromZaznam(paKluc.naklonuj(), -1));
+				aKluce.remove(i);
+				aPocetPlatnychKlucov--;
+				return;
+			}
+		}
+	}
+	
+	public void vymaz(long addr) {
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getAdresa() == addr) {
+				aKluce.add(new BStromZaznam(aKluce.get(i).getKluc().naklonuj(), -1));
 				aKluce.remove(i);
 				aPocetPlatnychKlucov--;
 				return;
