@@ -6,9 +6,6 @@
 package sk.uniza.fri.duracik2.vodicaky;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import sk.uniza.fri.duracik2.bstrom.BStrom;
 import sk.uniza.fri.duracik2.bstrom.BStromZaznam;
 import sk.uniza.fri.duracik2.bstrom.IntovyKluc;
@@ -19,10 +16,14 @@ import sk.uniza.fri.duracik2.bstrom.IntovyKluc;
  */
 public class MainBStrom {
 	public static void main(String[] args) {
+		new File("dakyStrom.bin").delete();
+		new File("dakyStrom.bin.bitmap").delete();
+		
+		
 		//try (BStrom strom = new BStrom(new File("dakyStrom.bin"), new StringovyKluc(((char) 0xFF)+"", 8), 3))
-		try (BStrom strom = new BStrom(new File("dakyStrom.bin"), new IntovyKluc(0), 21))
+		try (BStrom strom = new BStrom(new File("dakyStrom.bin"), new IntovyKluc(0), 3))
 		{			
-			int numbers = 10000;
+			/*int numbers = 100;
 			
 			List<Integer> ints = new ArrayList<>(numbers);
 			for (int i = 0; i < numbers; i++) {
@@ -38,12 +39,25 @@ public class MainBStrom {
 				}
 			}
 			
+			strom.inOrderVypis();
+			
 			for(int i:ints) {
 				long x = strom.najdi(new IntovyKluc(i));
 				if (x != i) {
 					System.err.println("err");
 				}
 			}
+			
+			//strom.inOrderVypis();
+			
+			for(int i:ints) {
+				System.out.println("mazem"+i);
+				long x = strom.vymaz(new IntovyKluc(i));
+				if (x != i) {
+					System.err.println("err");
+				}
+			}*/
+			
 			
 			/*strom.vloz(new BStromZaznam(new StringovyKluc("08", 7), 8));
 			System.out.println(strom.najdi(new StringovyKluc("08", 7)));
@@ -69,7 +83,7 @@ public class MainBStrom {
 			strom.vloz(new BStromZaznam(new StringovyKluc("06", 7), 6));
 			System.out.println(strom.najdi(new StringovyKluc("06", 7)));*/
 			
-			/*strom.vloz(new BStromZaznam(new IntovyKluc(8), 8));
+			strom.vloz(new BStromZaznam(new IntovyKluc(8), 8));
 			System.out.println(strom.najdi(new IntovyKluc(8)));
 			
 			strom.vloz(new BStromZaznam(new IntovyKluc(5), 5));
@@ -91,7 +105,13 @@ public class MainBStrom {
 			System.out.println(strom.najdi(new IntovyKluc(9)));
 			
 			strom.vloz(new BStromZaznam(new IntovyKluc(6), 6));
-			System.out.println(strom.najdi(new IntovyKluc(6)));*/
+			System.out.println(strom.najdi(new IntovyKluc(6)));
+			
+			strom.vymaz(new IntovyKluc(7));
+			strom.vymaz(new IntovyKluc(8));
+			strom.vymaz(new IntovyKluc(12));
+			strom.vymaz(new IntovyKluc(9));
+			
 			
 			strom.inOrderVypis();
 		}

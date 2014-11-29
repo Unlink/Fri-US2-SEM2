@@ -149,6 +149,7 @@ public class Uzol extends AZaznam {
 		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
 			if (paKluc.compareTo(aKluce.get(i).getKluc()) == 0) {
 				aKluce.remove(i);
+				aKluce.add(new BStromZaznam(paKluc.naklonuj(), -1));
 				//Zmazal som posledný
 				if ((aPocetPlatnychKlucov-1) == i && i > 0) {
 					aPocetPlatnychKlucov--;
@@ -289,6 +290,7 @@ public class Uzol extends AZaznam {
 		}
 		aKluce.add(0, zaznam);
 		aKluce.remove(aPocetKlucov);
+		aPocetPlatnychKlucov++;
 	}
 
 	public long dajLavehoBrata(Kluc kluc) {
@@ -303,6 +305,9 @@ public class Uzol extends AZaznam {
 					return aKluce.get(i-2).getAdresa();
 				}
 			}
+		}
+		if (aPocetPlatnychKlucov == 1) {
+			return aAddr;
 		}
 		return aKluce.get(aPocetPlatnychKlucov-2).getAdresa();
 	}
@@ -355,5 +360,29 @@ public class Uzol extends AZaznam {
 			}
 		}
 		return aKluce.get(aPocetPlatnychKlucov-1).getKluc().naklonuj();
+	}
+	
+	public Kluc dajNasledujuciKluc(Kluc paKluc) {
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getKluc().compareTo(paKluc) > 0) {
+				return aKluce.get(i).getKluc().naklonuj();
+			}
+		}
+		return null;
+	}
+
+	public void vymaz(Kluc paKluc) {
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getKluc().compareTo(paKluc) == 0) {
+				aKluce.add(new BStromZaznam(paKluc.naklonuj(), -1));
+				aKluce.remove(i);
+				aPocetPlatnychKlucov--;
+				return;
+			}
+		}
+	}
+
+	public boolean jePrazdny() {
+		return aPocetPlatnychKlucov==0;
 	}
 }

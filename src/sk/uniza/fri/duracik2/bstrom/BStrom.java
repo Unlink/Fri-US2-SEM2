@@ -136,44 +136,82 @@ public class BStrom implements AutoCloseable {
 			}
 			return adresaKluca;
 		}
+		
+		uzol.odoberKlucZListu(kluc);
+		while (uzol.dajAdresu() != aInfoBlok.getKoren() && uzol.getPocetPlatnychKlucov() < aStupen/2) {
+			BStromZaznam zaznam;
+			Uzol otec = (Uzol) bloky.getLast().dajZaznam(0);
+			Kluc maxKluc = (uzol.jePrazdny()) ? kluc : uzol.dajMaximalnyKluc();
+			BlokHolder lavyBrat = new BlokHolder(null);
+			zaznam = zoberZlaveho(maxKluc, otec, lavyBrat);
+			if (zaznam != null) {
+				Kluc k = ((Uzol)lavyBrat.getBlok().dajZaznam(0)).dajMaximalnyKluc();
+				//BStromZaznam novy = new BStromZaznam(k.naklonuj(), zaznam.getAdresa());
+				uzol.zaradAkoMinimalny(zaznam);
+				otec.nahradKluc(zaznam.getKluc().naklonuj(), k);
+				otec.nahradKluc(otec.dajNasledujuciKluc(k).naklonuj(), uzol.dajMaximalnyKluc());
+				aSubor.nastavBlok(aktual);
+				aSubor.ulozBlok();
+				aSubor.nastavBlok(bloky.getLast());
+				aSubor.ulozBlok();
+				return adresaKluca;
+			}
+			BlokHolder pravyBrat = new BlokHolder(null);
+			zaznam = zoberZPraveho(maxKluc, otec, pravyBrat);
+			if (zaznam != null) {
+				Kluc k = otec.dajPredchadzajuciKluc(zaznam.getKluc());
+				//BStromZaznam novy = new BStromZaznam(k.naklonuj(), zaznam.getAdresa());
+				uzol.zaradAkoMaximalny(zaznam);
+				otec.nahradKluc(k, zaznam.getKluc().naklonuj());
+				aSubor.nastavBlok(aktual);
+				aSubor.ulozBlok();
+				aSubor.nastavBlok(bloky.getLast());
+				aSubor.ulozBlok();
+				return adresaKluca;
+			}
 
-		BStromZaznam zaznam;
-		Uzol otec = (Uzol) bloky.getLast().dajZaznam(0);
-		Kluc maxKluc = uzol.dajMaximalnyKluc();
-		BlokHolder lavyBrat = new BlokHolder(null);
-		zaznam = zoberZlaveho(maxKluc, otec, lavyBrat);
-		if (zaznam != null) {
-			Kluc k = aSubor.dajZaznam(zaznam.getAdresa()).dajMaximalnyKluc();
-			BStromZaznam novy = new BStromZaznam(k.naklonuj(), zaznam.getAdresa());
-			uzol.zaradAkoMinimalny(novy);
-			otec.nahradKluc(k ,zaznam.getKluc().naklonuj());
-			aSubor.nastavBlok(aktual);
-			aSubor.ulozBlok();
-			aSubor.nastavBlok(bloky.getLast());
-			aSubor.ulozBlok();
-			return adresaKluca;
-		}
-		BlokHolder pravyBrat = new BlokHolder(null);
-		zaznam = zoberZPraveho(maxKluc, otec, pravyBrat);
-		if (zaznam != null) {
-			Kluc k = otec.dajPredchadzajuciKluc(zaznam.getKluc());
-			BStromZaznam novy = new BStromZaznam(k.naklonuj(), zaznam.getAdresa());
-			uzol.zaradAkoMaximalny(zaznam);
-			otec.nahradKluc(k, zaznam.getKluc().naklonuj());
-			aSubor.nastavBlok(aktual);
-			aSubor.ulozBlok();
-			aSubor.nastavBlok(bloky.getLast());
-			aSubor.ulozBlok();
-			return adresaKluca;
+			//Ak sa nepodarilo zobrať z bratov, tak spojime bloky
+			if (lavyBrat.getBlok() != null) {
+				Uzol brat = (Uzol) lavyBrat.getBlok().dajZaznam(0);
+				Kluc k = brat.dajMaximalnyKluc();
+				brat.spojBloky(uzol);
+				aSubor.nastavBlok(lavyBrat.getBlok());
+				aSubor.ulozBlok();
+				otec.vymaz(k);
+				aSubor.nastavBlok(bloky.getLast());
+				aSubor.ulozBlok();
+				//Vymazanie bloku
+				aSubor.nastavBlok(aktual);
+				uzol.nastavValiditu(false);
+				aSubor.ulozBlok();
+			}
+			else if (pravyBrat.getBlok() != null) {
+				Uzol brat = (Uzol) pravyBrat.getBlok().dajZaznam(0);
+				Kluc k = uzol.dajMaximalnyKluc();
+				uzol.spojBloky(brat);
+				aSubor.nastavBlok(aktual);
+				aSubor.ulozBlok();
+				otec.vymaz(k);
+				aSubor.nastavBlok(bloky.getLast());
+				aSubor.ulozBlok();
+				//Vymazanie bloku
+				aSubor.nastavBlok(pravyBrat.getBlok());
+				brat.nastavValiditu(false);
+				aSubor.ulozBlok();
+			}
+		
+			aktual = bloky.removeLast();
+			uzol = (Uzol) aktual.dajZaznam(0);
 		}
 		
-		//Ak sa nepodarilo zobrať z bratov, tak spojime bloky
-		if (lavyBrat.getBlok() != null) {
-			Uzol brat = (Uzol) lavyBrat.getBlok().dajZaznam(0);
-			brat.spojBloky(uzol);
+		if (uzol.dajAdresu() == aInfoBlok.getKoren() && uzol.jePrazdny()){
+			aInfoBlok.setKoren(uzol.dajAdresu());
+			aSubor.nastavBlok(aktual);
+			uzol.nastavValiditu(false);
+			aSubor.ulozBlok();
 		}
 		
-		return 1;
+		return adresaKluca;
 	}
 
 	private void zmazKoren(Blok blok) throws IOException {
