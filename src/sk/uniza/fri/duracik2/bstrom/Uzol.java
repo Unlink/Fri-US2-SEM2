@@ -268,6 +268,92 @@ public class Uzol extends AZaznam {
 		return false;
 	}
 	
+	public Kluc dajMaximalnyKluc() {
+		return aKluce.get(aPocetPlatnychKlucov-1).getKluc().naklonuj();
+	}
+
+	public BStromZaznam zoberMaximalnyKluc() {
+		if (maDostatokPrvkov()) {
+			BStromZaznam zaznam = aKluce.get(aPocetPlatnychKlucov-1);
+			aPocetPlatnychKlucov--;
+			return zaznam;
+		}
+		return null;
+	}
 	
+	public void zaradAkoMinimalny(BStromZaznam zaznam) {
+		if (!jeList()) {
+			long prvaAddr = aAddr;
+			aAddr = zaznam.getAdresa();
+			zaznam.setAdresa(prvaAddr);
+		}
+		aKluce.add(0, zaznam);
+		aKluce.remove(aPocetKlucov);
+	}
+
+	public long dajLavehoBrata(Kluc kluc) {
+		if (aKluce.get(0).getKluc().compareTo(kluc) >= 0) {
+			return -1;
+		}
+		for (int i = 1; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getKluc().compareTo(kluc) >= 0) {
+				if (i == 1)
+					return aAddr;
+				else {
+					return aKluce.get(i-2).getAdresa();
+				}
+			}
+		}
+		return aKluce.get(aPocetPlatnychKlucov-2).getAdresa();
+	}
 	
+	public long dajPravehoBrata(Kluc kluc) {
+		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getKluc().compareTo(kluc) >= 0) {
+				return aKluce.get(i).getAdresa();
+			}
+		}
+		return -1;
+	}
+
+	public BStromZaznam zoberMinimalnyKluc() {
+		if (maDostatokPrvkov()) {
+			aPocetPlatnychKlucov--;
+			BStromZaznam zaznam;
+			zaznam = aKluce.get(0);
+			aKluce.remove(0);
+			aKluce.add(new BStromZaznam(zaznam.getKluc().naklonuj(), -1));
+			if (!jeList()) {
+				long adresa = aAddr;
+				aAddr = zaznam.getAdresa();
+				zaznam.setAdresa(adresa);
+			}
+			return zaznam;
+		}
+		return null;
+	}
+
+	public void zaradAkoMaximalny(BStromZaznam paZaznam) {
+		aKluce.set(aPocetPlatnychKlucov, paZaznam);
+		aPocetPlatnychKlucov++;
+	}
+
+	public void spojBloky(Uzol paUzol) {
+		for (int i=0; i<paUzol.aPocetPlatnychKlucov; i++) {
+			aKluce.set(aPocetPlatnychKlucov, paUzol.aKluce.get(i));
+			aPocetPlatnychKlucov++;
+		}
+		if (jeList()) {
+			aAddr = paUzol.aAddr;
+		}
+	}
+
+	public Kluc dajPredchadzajuciKluc(Kluc paKluc) {
+		for (int i = 1; i < aPocetPlatnychKlucov; i++) {
+			if (aKluce.get(i).getKluc().compareTo(paKluc) > 0) {
+				return aKluce.get(i-1).getKluc().naklonuj();
+			}
+		}
+		return aKluce.get(aPocetPlatnychKlucov-1).getKluc().naklonuj();
+	}
 }
