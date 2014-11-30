@@ -5,18 +5,23 @@
  */
 package sk.uniza.fri.duracik2.vodicaky.entity;
 
+import com.sun.org.apache.bcel.internal.generic.IndexedInstruction;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
 import sk.uniza.fri.duracik2.blockfile.AZaznam;
 import sk.uniza.fri.duracik2.blockfile.IZaznam;
+import sk.uniza.fri.duracik2.bstrom.Kluc;
+import sk.uniza.fri.duracik2.bstrom.StringovyKluc;
+import sk.uniza.fri.duracik2.fullIndex.IIndexovatelnyPrvok;
 
 /**
  *
  * @author Unlink
  */
-public class Automobil extends AZaznam {
+public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
 	
 	/**
 	 * dlzka 7 znakov
@@ -38,8 +43,16 @@ public class Automobil extends AZaznam {
 		aKoniecStk = new Date();
 		aKonciecEk = new Date();
 	}
-	
-	
+
+	public Automobil(String paEvcVozidla, String paVinCislo, int paPocetNaprav, int paHmotnost, boolean paVPatrani, Date paKoniecStk, Date paKonciecEk) {
+		this.aEvcVozidla = paEvcVozidla;
+		this.aVinCislo = paVinCislo;
+		this.aPocetNaprav = (short) paPocetNaprav;
+		this.aHmotnost = paHmotnost;
+		this.aVPatrani = paVPatrani;
+		this.aKoniecStk = paKoniecStk;
+		this.aKonciecEk = paKonciecEk;
+	}
 
 	@Override
 	public int dajVelkost() {
@@ -170,6 +183,71 @@ public class Automobil extends AZaznam {
 	@Override
 	public String toString() {
 		return "Automobil{" + "aEvcVozidla=" + aEvcVozidla + ", aVinCislo=" + aVinCislo + '}';
+	}
+	
+	public Kluc[] dajKluce() {
+		return new Kluc[]{
+			new StringovyKluc(aEvcVozidla, 7),
+			new StringovyKluc(aVinCislo, 17),
+		};
+	}
+
+	@Override
+	public void nakopirujData(IIndexovatelnyPrvok paPrvok) {
+		Automobil auto = (Automobil) paPrvok;
+		aEvcVozidla = auto.aEvcVozidla;
+		aHmotnost = auto.aHmotnost;
+		aKonciecEk = auto.aKonciecEk;
+		aKoniecStk = auto.aKoniecStk;
+		aPocetNaprav = auto.aPocetNaprav;
+		aVPatrani = auto.aVPatrani;
+		aVinCislo = auto.aVinCislo;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 59 * hash + Objects.hashCode(this.aEvcVozidla);
+		hash = 59 * hash + Objects.hashCode(this.aVinCislo);
+		hash = 59 * hash + this.aPocetNaprav;
+		hash = 59 * hash + this.aHmotnost;
+		hash = 59 * hash + (this.aVPatrani ? 1 : 0);
+		hash = 59 * hash + Objects.hashCode(this.aKoniecStk);
+		hash = 59 * hash + Objects.hashCode(this.aKonciecEk);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Automobil other = (Automobil) obj;
+		if (!Objects.equals(this.aEvcVozidla, other.aEvcVozidla)) {
+			return false;
+		}
+		if (!Objects.equals(this.aVinCislo, other.aVinCislo)) {
+			return false;
+		}
+		if (this.aPocetNaprav != other.aPocetNaprav) {
+			return false;
+		}
+		if (this.aHmotnost != other.aHmotnost) {
+			return false;
+		}
+		if (this.aVPatrani != other.aVPatrani) {
+			return false;
+		}
+		if (!Objects.equals(this.aKoniecStk, other.aKoniecStk)) {
+			return false;
+		}
+		if (!Objects.equals(this.aKonciecEk, other.aKonciecEk)) {
+			return false;
+		}
+		return true;
 	}
 	
 	
