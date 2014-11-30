@@ -25,23 +25,26 @@ public class UplnyIndex<T extends IIndexovatelnyPrvok> implements AutoCloseable 
 	private BStrom[] aIndexy;
 	private BinarnySubor<T> aNeutriedeny;	
 	
-	public UplnyIndex(T paSample, int paPocZaznamov, int[] paPocetZaznamovVIndexe, boolean paForce) throws IOException, InstantiationException, IllegalAccessException {
-		String filename = paSample.getClass().getName();
+	public UplnyIndex(T paSample, int paPocZaznamov, int[] paPocetZaznamovVIndexe, File paZlozka, boolean paForce) throws IOException, InstantiationException, IllegalAccessException {
+		if (!paZlozka.exists()) {
+			paZlozka.mkdirs();
+		}
+		String filename = paSample.getClass().getSimpleName();
 		if (paForce) {
-			new File(filename+".bin").delete();
+			new File(paZlozka,filename+".bin").delete();
 			for (int i=0; i<paSample.dajKluce().length; i++) {
-				new File(filename+".index"+i).delete();
+				new File(paZlozka,filename+".index"+i).delete();
 			}
 		}
-		aNeutriedeny = new BinarnySubor<>(paSample, paPocZaznamov, new File(filename+".bin"));
+		aNeutriedeny = new BinarnySubor<>(paSample, paPocZaznamov, new File(paZlozka,filename+".bin"));
 		aIndexy = new BStrom[paSample.dajKluce().length];
 		for (int i=0; i<paSample.dajKluce().length; i++) {
-			aIndexy[i] = new BStrom(new File(filename+".index"+i), paSample.dajKluce()[i], paPocetZaznamovVIndexe[i]);
+			aIndexy[i] = new BStrom(new File(paZlozka,filename+".index"+i), paSample.dajKluce()[i], paPocetZaznamovVIndexe[i]);
 		}
 	}
 
-	public UplnyIndex(T paSample, int paPocZaznamov, int[] paPocetZaznamovVIndexe) throws IOException, InstantiationException, IllegalAccessException {
-		this(paSample, paPocZaznamov, paPocetZaznamovVIndexe, true);
+	public UplnyIndex(T paSample, int paPocZaznamov, int[] paPocetZaznamovVIndexe, File paZlozka) throws IOException, InstantiationException, IllegalAccessException {
+		this(paSample, paPocZaznamov, paPocetZaznamovVIndexe, paZlozka, true);
 	}
 	
 	

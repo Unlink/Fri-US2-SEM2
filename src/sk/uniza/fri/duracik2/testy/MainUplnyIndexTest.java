@@ -5,6 +5,7 @@
  */
 package sk.uniza.fri.duracik2.testy;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
@@ -20,7 +21,7 @@ import sk.uniza.fri.duracik2.vodicaky.entity.Automobil;
 public class MainUplnyIndexTest {
 	public static void main(String[] args) {
 		long teraz = System.currentTimeMillis();
-		try (UplnyIndex<Automobil> index = new UplnyIndex<>(new Automobil(), 5, new int[]{5, 5})) {
+		try (UplnyIndex<Automobil> index = new UplnyIndex<>(new Automobil(), 5, new int[]{5, 5}, new File("data"))) {
 			Automobil auto1 = new Automobil("ZA123AA", "123456789", 2, 1240, false, new Date(teraz), new Date(teraz));
 			Automobil auto2 = new Automobil("ZA321AA", "987654321", 3, 2500, false, new Date(teraz), new Date(teraz));
 			Automobil auto3 = new Automobil("BA222CC", "111111111", 2, 980, false, new Date(teraz), new Date(teraz));
