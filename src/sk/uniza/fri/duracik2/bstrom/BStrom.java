@@ -34,8 +34,9 @@ public class BStrom implements AutoCloseable {
 	}
 
 	public long najdi(Kluc paKluc) throws IOException {
-		if (aInfoBlok.getKoren() < 0)
+		if (aInfoBlok.getKoren() < 0) {
 			return -1;
+		}
 		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getKoren());
 		while (!uzol.jeList()) {
 			long addresa = uzol.dalsiaAdresa(paKluc);
@@ -140,13 +141,13 @@ public class BStrom implements AutoCloseable {
 		}
 
 		uzol.odoberKlucZListu(kluc);
-		while (uzol.dajAdresu() != aInfoBlok.getKoren() && uzol.getPocetPlatnychKlucov() < aStupen/2) {
+		while (uzol.dajAdresu() != aInfoBlok.getKoren() && uzol.getPocetPlatnychKlucov() < aStupen / 2) {
 			BStromZaznam zaznam;
 			Uzol otec = (Uzol) bloky.getLast().dajZaznam(0);
 			BlokHolder lavyBrat = new BlokHolder(null);
 			zaznam = zoberZlaveho(uzol.dajAdresu(), otec, lavyBrat);
 			if (zaznam != null) {
-				Kluc k = ((Uzol)lavyBrat.getBlok().dajZaznam(0)).dajMaximalnyKluc();
+				Kluc k = ((Uzol) lavyBrat.getBlok().dajZaznam(0)).dajMaximalnyKluc();
 				if (uzol.jeList()) {
 					uzol.zaradAkoMinimalny(zaznam);
 					otec.nahradKluc(zaznam.getKluc().naklonuj(), k);
@@ -168,8 +169,9 @@ public class BStrom implements AutoCloseable {
 			zaznam = zoberZPraveho(uzol.dajAdresu(), otec, pravyBrat);
 			if (zaznam != null) {
 				//Kluc k = otec.dajPredchadzajuciKluc(zaznam.getKluc());
-				if (uzol.jeList())
+				if (uzol.jeList()) {
 					uzol.zaradAkoMaximalny(zaznam);
+				}
 				else {
 					BStromZaznam novy = new BStromZaznam(najdiMaximalnyKluc(uzol).naklonuj(), zaznam.getAdresa());
 					uzol.zaradAkoMaximalny(novy);
@@ -234,7 +236,7 @@ public class BStrom implements AutoCloseable {
 			uzol = (Uzol) aktual.dajZaznam(0);
 		}
 
-		if (uzol.dajAdresu() == aInfoBlok.getKoren() && uzol.jePrazdny()){
+		if (uzol.dajAdresu() == aInfoBlok.getKoren() && uzol.jePrazdny()) {
 			aInfoBlok.setKoren(uzol.getAddr());
 			aSubor.nastavBlok(aktual);
 			uzol.nastavValiditu(false);
@@ -288,7 +290,7 @@ public class BStrom implements AutoCloseable {
 	}
 
 	private void zmenKluce(LinkedList<Blok> bloky, Kluc k1, Kluc kluc) throws IOException {
-		for (int i=bloky.size()-1; i>=0; i--) {
+		for (int i = bloky.size() - 1; i >= 0; i--) {
 			Blok blok = bloky.get(i);
 			Uzol uzol = (Uzol) blok.dajZaznam(0);
 			if (uzol.nahradKluc(kluc, k1)) {

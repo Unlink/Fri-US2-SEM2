@@ -21,7 +21,7 @@ import sk.uniza.fri.duracik2.fullIndex.IIndexovatelnyPrvok;
  * @author Unlink
  */
 public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
-	
+
 	/**
 	 * dlzka 7 znakov
 	 */
@@ -55,22 +55,22 @@ public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
 
 	@Override
 	public int dajVelkost() {
-		return 7*2 //EVC
-			+ 17*2 //Vin
-			+ 2	   //Pocet naprav
-			+ 4    //hmotnost
-			+ 1    //V patrani
-			+ 8	   //Datum1
+		return 7 * 2 //EVC
+			+ 17 * 2 //Vin
+			+ 2 //Pocet naprav
+			+ 4 //hmotnost
+			+ 1 //V patrani
+			+ 8 //Datum1
 			+ 8;   //Datum 2
 	}
 
 	@Override
 	public void nahraj(DataInputStream paStream) {
 		try {
-			byte[] buff = new byte[7*2];
+			byte[] buff = new byte[7 * 2];
 			paStream.read(buff);
 			aEvcVozidla = new String(buff).trim();
-			buff = new byte[17*2];
+			buff = new byte[17 * 2];
 			paStream.read(buff);
 			aVinCislo = new String(buff).trim();
 			aPocetNaprav = paStream.readShort();
@@ -82,21 +82,21 @@ public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
 		catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		
+
 	}
 
 	@Override
 	public void serializuj(DataOutputStream stream) {
-		try {			
-			byte [] buff = new byte[7*2];
-			byte [] temp = aEvcVozidla.getBytes();
-			System.arraycopy(temp, 0, buff, 0, Math.min(buff.length, temp.length));	
+		try {
+			byte[] buff = new byte[7 * 2];
+			byte[] temp = aEvcVozidla.getBytes();
+			System.arraycopy(temp, 0, buff, 0, Math.min(buff.length, temp.length));
 			stream.write(buff);
-			buff = new byte[17*2];
+			buff = new byte[17 * 2];
 			temp = aVinCislo.getBytes();
 			System.arraycopy(temp, 0, buff, 0, Math.min(buff.length, temp.length));
 			stream.write(buff);
-			
+
 			stream.writeShort(aPocetNaprav);
 			stream.writeInt(aHmotnost);
 			stream.writeBoolean(aVPatrani);
@@ -107,8 +107,6 @@ public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
 			ex.printStackTrace();
 		}
 	}
-	
-	
 
 	@Override
 	public IZaznam naklonuj() {
@@ -183,12 +181,11 @@ public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
 	public String toString() {
 		return "Automobil{" + "aEvcVozidla=" + aEvcVozidla + ", aVinCislo=" + aVinCislo + '}';
 	}
-	
+
 	public Kluc[] dajKluce() {
 		return new Kluc[]{
 			new StringovyKluc(aEvcVozidla, 7),
-			new StringovyKluc(aVinCislo, 17),
-		};
+			new StringovyKluc(aVinCislo, 17),};
 	}
 
 	@Override
@@ -248,7 +245,5 @@ public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
 		}
 		return true;
 	}
-	
-	
-	
+
 }

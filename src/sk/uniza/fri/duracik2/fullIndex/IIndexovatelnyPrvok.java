@@ -14,5 +14,6 @@ import sk.uniza.fri.duracik2.bstrom.Kluc;
  */
 public interface IIndexovatelnyPrvok extends IZaznam {
 	public Kluc[] dajKluce();
+
 	public void nakopirujData(IIndexovatelnyPrvok paPrvok);
 }

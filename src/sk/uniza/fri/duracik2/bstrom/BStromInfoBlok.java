@@ -22,7 +22,7 @@ public class BStromInfoBlok extends InfoBlok {
 	private long aZacUtriedeneho;
 
 	@Override
-	public byte[] dajBajty() {		
+	public byte[] dajBajty() {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(getVelkostBloku());
 		DataOutputStream output = new DataOutputStream(byteArrayOutputStream);
 		try {
@@ -46,9 +46,9 @@ public class BStromInfoBlok extends InfoBlok {
 	public void deserializuj(byte[] data) {
 		super.deserializuj(Arrays.copyOfRange(data, 16, data.length));
 		aKoren = ByteBuffer.wrap(data, 0, 8).getLong();
-		aZacUtriedeneho  = ByteBuffer.wrap(data, 8, 8).getLong();
+		aZacUtriedeneho = ByteBuffer.wrap(data, 8, 8).getLong();
 	}
-	
+
 	public long getKoren() {
 		return aKoren;
 	}
@@ -64,7 +64,5 @@ public class BStromInfoBlok extends InfoBlok {
 	public void setZacUtriedeneho(long aZacUtriedeneho) {
 		this.aZacUtriedeneho = aZacUtriedeneho;
 	}
-	
-	
-	
+
 }

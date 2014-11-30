@@ -18,8 +18,7 @@ public abstract class AZaznam implements IZaznam {
 		aAdresa = -1;
 		aValidny = false;
 	}
-	
-	
+
 	@Override
 	public void nastavAdresu(long paAdresa) {
 		aAdresa = paAdresa;

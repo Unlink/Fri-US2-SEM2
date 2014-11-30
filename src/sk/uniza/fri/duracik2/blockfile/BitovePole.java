@@ -22,7 +22,7 @@ public class BitovePole {
 	}
 
 	public int dajVelkost() {
-		return ((aVelkost-1) / 8) + 1;
+		return ((aVelkost - 1) / 8) + 1;
 	}
 
 	public boolean dajFlag(int paIndex) {
@@ -55,5 +55,5 @@ public class BitovePole {
 		aVelkost = paVelkost;
 		aData = Arrays.copyOf(aData, dajVelkost());
 	}
-	
+
 }

@@ -25,6 +25,5 @@ public class BlokHolder {
 	public void setBlok(Blok paBlok) {
 		this.aBlok = paBlok;
 	}
-	
-	
+
 }

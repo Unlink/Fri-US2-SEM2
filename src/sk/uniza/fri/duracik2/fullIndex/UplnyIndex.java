@@ -21,38 +21,37 @@ import sk.uniza.fri.duracik2.bstrom.Kluc;
  * @param <T>
  */
 public class UplnyIndex<T extends IIndexovatelnyPrvok> implements AutoCloseable {
-	
+
 	private BStrom[] aIndexy;
-	private BinarnySubor<T> aNeutriedeny;	
-	
+	private BinarnySubor<T> aNeutriedeny;
+
 	public UplnyIndex(T paSample, int paPocZaznamov, int[] paPocetZaznamovVIndexe, File paZlozka, boolean paForce) throws IOException, InstantiationException, IllegalAccessException {
 		if (!paZlozka.exists()) {
 			paZlozka.mkdirs();
 		}
 		String filename = paSample.getClass().getSimpleName();
 		if (paForce) {
-			new File(paZlozka,filename+".bin").delete();
-			for (int i=0; i<paSample.dajKluce().length; i++) {
-				new File(paZlozka,filename+".index"+i).delete();
+			new File(paZlozka, filename + ".bin").delete();
+			for (int i = 0; i < paSample.dajKluce().length; i++) {
+				new File(paZlozka, filename + ".index" + i).delete();
 			}
 		}
-		aNeutriedeny = new BinarnySubor<>(paSample, paPocZaznamov, new File(paZlozka,filename+".bin"));
+		aNeutriedeny = new BinarnySubor<>(paSample, paPocZaznamov, new File(paZlozka, filename + ".bin"));
 		aIndexy = new BStrom[paSample.dajKluce().length];
-		for (int i=0; i<paSample.dajKluce().length; i++) {
-			aIndexy[i] = new BStrom(new File(paZlozka,filename+".index"+i), paSample.dajKluce()[i], paPocetZaznamovVIndexe[i]);
+		for (int i = 0; i < paSample.dajKluce().length; i++) {
+			aIndexy[i] = new BStrom(new File(paZlozka, filename + ".index" + i), paSample.dajKluce()[i], paPocetZaznamovVIndexe[i]);
 		}
 	}
 
 	public UplnyIndex(T paSample, int paPocZaznamov, int[] paPocetZaznamovVIndexe, File paZlozka) throws IOException, InstantiationException, IllegalAccessException {
 		this(paSample, paPocZaznamov, paPocetZaznamovVIndexe, paZlozka, true);
 	}
-	
-	
+
 	public long vlozPrvok(T paPrvok) throws IOException {
 		//Overenie ci tu už taky nieje
-		for (int i=0; i<aIndexy.length; i++) {
-			if (aIndexy[i].najdi(paPrvok.dajKluce()[i]) > 0){
-				throw new DuplikatnyPrvokException("Kluc "+paPrvok.dajKluce()[i]);
+		for (int i = 0; i < aIndexy.length; i++) {
+			if (aIndexy[i].najdi(paPrvok.dajKluce()[i]) > 0) {
+				throw new DuplikatnyPrvokException("Kluc " + paPrvok.dajKluce()[i]);
 			}
 		}
 		T zaznam = aNeutriedeny.dajVolnyZaznam();
@@ -60,12 +59,12 @@ public class UplnyIndex<T extends IIndexovatelnyPrvok> implements AutoCloseable 
 		zaznam.nastavValiditu(true);
 		aNeutriedeny.ulozBlok();
 		long adresa = zaznam.dajAdresu();
-		for (int i=0; i<aIndexy.length; i++) {
+		for (int i = 0; i < aIndexy.length; i++) {
 			aIndexy[i].vloz(new BStromZaznam(paPrvok.dajKluce()[i], adresa));
 		}
 		return adresa;
 	}
-	
+
 	public T vyhladaj(int paIndex, Kluc paKluc) throws IOException {
 		long adresa = aIndexy[paIndex].najdi(paKluc);
 		if (adresa < 0) {
@@ -73,14 +72,14 @@ public class UplnyIndex<T extends IIndexovatelnyPrvok> implements AutoCloseable 
 		}
 		return aNeutriedeny.dajZaznam(adresa);
 	}
-	
+
 	public T vymaz(int paIndex, Kluc paKluc) throws IOException {
 		long adresa = aIndexy[paIndex].vymaz(paKluc);
 		if (adresa < 0) {
 			return null;
 		}
 		T prvok = aNeutriedeny.dajZaznam(adresa);
-		for (int i=0; i<aIndexy.length; i++) {
+		for (int i = 0; i < aIndexy.length; i++) {
 			if (i != paIndex) {
 				aIndexy[i].vymaz(prvok.dajKluce()[i]);
 			}

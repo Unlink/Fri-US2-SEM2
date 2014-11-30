@@ -12,7 +12,9 @@ import sk.uniza.fri.duracik2.bstrom.Kluc;
  * @author Unlink
  */
 public interface IPrvokStromu {
-	public int dajPocetKlucov();
-	public Kluc dajKluc(int paIndex);
 	
+	public int dajPocetKlucov();
+
+	public Kluc dajKluc(int paIndex);
+
 }

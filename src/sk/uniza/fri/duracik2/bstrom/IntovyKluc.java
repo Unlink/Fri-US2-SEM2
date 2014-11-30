@@ -18,7 +18,7 @@ public class IntovyKluc implements Kluc {
 	public IntovyKluc(int aInt) {
 		this.aInt = aInt;
 	}
-	
+
 	@Override
 	public void nahraj(byte[] paStream) {
 		aInt = ByteBuffer.wrap(paStream).getInt();
@@ -42,14 +42,12 @@ public class IntovyKluc implements Kluc {
 
 	@Override
 	public int compareTo(Kluc o) {
-		return Integer.compare(aInt, ((IntovyKluc)o).aInt);
+		return Integer.compare(aInt, ((IntovyKluc) o).aInt);
 	}
 
 	@Override
 	public String toString() {
-		return aInt+"";
+		return aInt + "";
 	}
-	
-	
-	
+
 }

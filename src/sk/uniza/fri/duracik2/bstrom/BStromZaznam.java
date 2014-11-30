@@ -38,7 +38,5 @@ public class BStromZaznam {
 	public String toString() {
 		return aKluc + "=" + aAdresa;
 	}
-	
-	
-	
+
 }

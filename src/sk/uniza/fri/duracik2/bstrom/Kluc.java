@@ -11,7 +11,9 @@ package sk.uniza.fri.duracik2.bstrom;
  */
 public interface Kluc extends Comparable<Kluc> {
 	public void nahraj(byte[] paStream);
+
 	public void serializuj(byte[] stream);
+
 	public Kluc naklonuj();
 
 	public int dajVelkost();

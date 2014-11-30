@@ -36,7 +36,7 @@ public class InfoBlok {
 		catch (IOException ex) {
 		}
 	}
-	
+
 	public void inicializuj(int paVelksotBloku) {
 		this.aVelkostBloku = paVelksotBloku;
 		aPocetZaznamov = 0;
@@ -67,8 +67,6 @@ public class InfoBlok {
 	public int getVelkostBloku() {
 		return aVelkostBloku;
 	}
-	
-	
 
 	public byte[] dajBajty() {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(aVelkostBloku);

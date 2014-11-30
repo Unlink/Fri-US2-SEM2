@@ -20,7 +20,7 @@ public class StringovyKluc implements Kluc {
 		this.aString = aString;
 		this.aMaxVelksot = aMaxVelksot;
 	}
-	
+
 	@Override
 	public void nahraj(byte[] paStream) {
 		aString = new String(paStream).trim();
@@ -28,8 +28,8 @@ public class StringovyKluc implements Kluc {
 
 	@Override
 	public void serializuj(byte[] stream) {
-		Arrays.fill(stream, (byte)0);
-		byte [] temp = aString.getBytes();
+		Arrays.fill(stream, (byte) 0);
+		byte[] temp = aString.getBytes();
 		System.arraycopy(temp, 0, stream, 0, Math.min(stream.length, temp.length));
 	}
 
@@ -40,19 +40,17 @@ public class StringovyKluc implements Kluc {
 
 	@Override
 	public int dajVelkost() {
-		return aMaxVelksot*2;
+		return aMaxVelksot * 2;
 	}
 
 	@Override
 	public int compareTo(Kluc o) {
-		return aString.compareTo(((StringovyKluc)o).aString);
+		return aString.compareTo(((StringovyKluc) o).aString);
 	}
 
 	@Override
 	public String toString() {
 		return aString;
 	}
-	
-	
-	
+
 }

@@ -17,5 +17,5 @@ public class DuplikatnyPrvokException extends RuntimeException {
 	public DuplikatnyPrvokException(String message) {
 		super(message);
 	}
-	
+
 }

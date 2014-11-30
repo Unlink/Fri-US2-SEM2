@@ -22,11 +22,11 @@ public class Blok implements Cloneable {
 	private final BitovePole aValidne;
 	private long aAdresaBloku;
 	private int aVelkost;
-	
+
 	public Blok(IZaznam[] paStruktura) {
 		this(paStruktura, -1);
 	}
-		
+
 	public Blok(IZaznam[] paStruktura, long paAdresaBloku) {
 		aZaznamy = paStruktura;
 		aValidne = new BitovePole(aZaznamy.length);
@@ -73,7 +73,6 @@ public class Blok implements Cloneable {
 		}
 		return poleBajtov.toByteArray();
 	}
-	
 
 	public Blok naklonuj() {
 		IZaznam[] zaznamy = new IZaznam[aZaznamy.length];
@@ -86,7 +85,7 @@ public class Blok implements Cloneable {
 	public long getAdresaBloku() {
 		return aAdresaBloku;
 	}
-	
+
 	public int dajPocetZaznamov() {
 		return aZaznamy.length;
 	}
@@ -95,12 +94,12 @@ public class Blok implements Cloneable {
 		this.aAdresaBloku = aAdresaBloku;
 		this.invalidujVsetko();
 	}
-	
+
 	public IZaznam dajZaznam(int index) {
 		aZaznamy[index].nastavAdresu(spocitajAdresu(aAdresaBloku, index));
 		return aZaznamy[index];
 	}
-	
+
 	public boolean jeValidny(int index) {
 		return aZaznamy[index].jeValidny();
 	}
@@ -108,13 +107,13 @@ public class Blok implements Cloneable {
 	public int getVelkost() {
 		return aVelkost;
 	}
-	
+
 	private void spocitajBitovePoleValidity() {
 		for (int i = 0; i < aZaznamy.length; i++) {
 			aValidne.nastavFlag(i, aZaznamy[i].jeValidny());
 		}
 	}
-	
+
 	public int dajVolnyZaznam() {
 		for (int i = 0; i < aZaznamy.length; i++) {
 			if (!aZaznamy[i].jeValidny()) {
@@ -123,7 +122,7 @@ public class Blok implements Cloneable {
 		}
 		return -1;
 	}
-	
+
 	public boolean jePlny() {
 		for (int i = 0; i < aZaznamy.length; i++) {
 			if (!aZaznamy[i].jeValidny()) {
@@ -132,7 +131,7 @@ public class Blok implements Cloneable {
 		}
 		return true;
 	}
-	
+
 	public boolean jePrazndy() {
 		for (int i = 0; i < aZaznamy.length; i++) {
 			if (aZaznamy[i].jeValidny()) {
@@ -147,22 +146,22 @@ public class Blok implements Cloneable {
 			aZaznamy[i].nastavValiditu(false);
 		}
 	}
-	
+
 	public static long spocitajAdresu(long blok, int indexZaznamu) {
 		return (blok << 8) + indexZaznamu;
 	}
-	
+
 	public static long dajIndexBloku(long paAdresa) {
 		return paAdresa >> 8;
 	}
-	
+
 	public static int dajIndexZaznamu(long paAdresa) {
-		return (int)(paAdresa & 0xFF);
+		return (int) (paAdresa & 0xFF);
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("Blok - " + aAdresaBloku+ "\n");
+		StringBuilder sb = new StringBuilder("Blok - " + aAdresaBloku + "\n");
 		for (int i = 0; i < aZaznamy.length; i++) {
 			if (aZaznamy[i].jeValidny()) {
 				sb.append(i).append(": ").append(aZaznamy[i].toString()).append("\n");
@@ -173,6 +172,5 @@ public class Blok implements Cloneable {
 		}
 		return sb.toString();
 	}
-	
-	
+
 }

@@ -19,7 +19,7 @@ import sk.uniza.fri.duracik2.blockfile.IZaznam;
  */
 public class Uzol extends AZaznam {
 	public static final int KLUC_NENAJDENY = -465;
-	
+
 	private int aPocetKlucov;
 	private int aVelkostKluca;
 	private ArrayList<BStromZaznam> aKluce;
@@ -27,7 +27,7 @@ public class Uzol extends AZaznam {
 	private boolean aJeList;
 	private Kluc aSample;
 	private int aPocetPlatnychKlucov;
-	
+
 	public Uzol(Uzol paUzol) {
 		nastavValiditu(true);
 		aPocetKlucov = paUzol.aPocetKlucov;
@@ -59,7 +59,7 @@ public class Uzol extends AZaznam {
 	@Override
 	public int dajVelkost() {
 		//jeden boolean pocet klucov + kluc + adresa + 1 adresa navyše
-		return 1+4+aVelkostKluca*aPocetKlucov + 8*(aPocetKlucov+1);
+		return 1 + 4 + aVelkostKluca * aPocetKlucov + 8 * (aPocetKlucov + 1);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class Uzol extends AZaznam {
 			for (int i = 0; i < aPocetKlucov; i++) {
 				paStream.read(buffer);
 				long addr = paStream.readLong();
-				if (i<aPocetPlatnychKlucov) {
+				if (i < aPocetPlatnychKlucov) {
 					aKluce.set(i, new BStromZaznam(aSample.naklonuj(), -1));
 					aKluce.get(i).getKluc().nahraj(buffer);
 					aKluce.get(i).setAdresa(addr);
@@ -106,7 +106,7 @@ public class Uzol extends AZaznam {
 	public IZaznam naklonuj() {
 		return new Uzol(this);
 	}
-	
+
 	public boolean jeList() {
 		return aJeList;
 	}
@@ -118,17 +118,18 @@ public class Uzol extends AZaznam {
 					return aAddr;
 				}
 				else {
-					return aKluce.get(i-1).getAdresa();
+					return aKluce.get(i - 1).getAdresa();
 				}
 			}
 		}
-		return aKluce.get(aPocetPlatnychKlucov-1).getAdresa();
+		return aKluce.get(aPocetPlatnychKlucov - 1).getAdresa();
 	}
 
 	public long dajAdresuKluca(Kluc paKluc) {
 		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
-			if (paKluc.compareTo(aKluce.get(i).getKluc()) == 0)
+			if (paKluc.compareTo(aKluce.get(i).getKluc()) == 0) {
 				return aKluce.get(i).getAdresa();
+			}
 		}
 		return KLUC_NENAJDENY;
 	}
@@ -136,14 +137,15 @@ public class Uzol extends AZaznam {
 	public boolean maMiesto() {
 		return aPocetPlatnychKlucov < aPocetKlucov;
 	}
-	
+
 	public boolean maDostatokPrvkov() {
-		return aPocetPlatnychKlucov > (aPocetKlucov/2);
+		return aPocetPlatnychKlucov > (aPocetKlucov / 2);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param paKluc
+	 *
 	 * @return predchádzajúci záznam, ak sme zmazali posledný
 	 */
 	public BStromZaznam odoberKlucZListu(Kluc paKluc) {
@@ -152,9 +154,9 @@ public class Uzol extends AZaznam {
 				aKluce.remove(i);
 				aKluce.add(new BStromZaznam(paKluc.naklonuj(), -1));
 				//Zmazal som posledný
-				if ((aPocetPlatnychKlucov-1) == i && i > 0) {
+				if ((aPocetPlatnychKlucov - 1) == i && i > 0) {
 					aPocetPlatnychKlucov--;
-					return aKluce.get(i-1);
+					return aKluce.get(i - 1);
 				}
 				else {
 					aPocetPlatnychKlucov--;
@@ -164,7 +166,7 @@ public class Uzol extends AZaznam {
 		}
 		return null;
 	}
-	
+
 	public void vloz(BStromZaznam zaznam) {
 		boolean pridany = false;
 		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
@@ -174,27 +176,27 @@ public class Uzol extends AZaznam {
 				aPocetPlatnychKlucov++;
 				pridany = true;
 				break;
-			}	
+			}
 		}
 		if (!pridany) {
 			aKluce.set(aPocetPlatnychKlucov, zaznam);
 			aPocetPlatnychKlucov++;
 		}
-		
+
 	}
 
 	public Kluc rozdelList(BStromZaznam paZaznam, Uzol novy) {
 		zaradZotriedene(paZaznam);
-		
-		aPocetPlatnychKlucov = (aPocetKlucov/2)+1;
-		for (int i=aPocetPlatnychKlucov; i<=aPocetKlucov; i++) {
+
+		aPocetPlatnychKlucov = (aPocetKlucov / 2) + 1;
+		for (int i = aPocetPlatnychKlucov; i <= aPocetKlucov; i++) {
 			novy.vloz(aKluce.get(i));
 		}
 		//Smerník na ďalší uzol v zotriedení
 		novy.aAddr = aAddr;
 		//Zmazeme ten docasný
 		aKluce.remove(aPocetKlucov);
-		return aKluce.get(aPocetPlatnychKlucov-1).getKluc();
+		return aKluce.get(aPocetPlatnychKlucov - 1).getKluc();
 	}
 
 	public long getAddr() {
@@ -212,13 +214,12 @@ public class Uzol extends AZaznam {
 	public int getPocetPlatnychKlucov() {
 		return aPocetPlatnychKlucov;
 	}
-	
 
 	public Kluc rozdelVnutornyUzol(BStromZaznam paZaznam, Uzol novy) {
 		zaradZotriedene(paZaznam);
-		
-		aPocetPlatnychKlucov = (aPocetKlucov/2);
-		for (int i=(aPocetKlucov/2)+1; i<=aPocetKlucov; i++) {
+
+		aPocetPlatnychKlucov = (aPocetKlucov / 2);
+		for (int i = (aPocetKlucov / 2) + 1; i <= aPocetKlucov; i++) {
 			novy.vloz(aKluce.get(i));
 		}
 		//Smerník na ďalší uzol v zotriedení
@@ -269,34 +270,34 @@ public class Uzol extends AZaznam {
 		}
 		return false;
 	}
-	
+
 	public boolean nahradKluc(long addr, Kluc nahrada) {
 		if (addr == aAddr) {
 			aKluce.get(0).setKluc(nahrada);
 			return true;
-		} 
-		for (int i = 0; i < aPocetPlatnychKlucov-1; i++) {
+		}
+		for (int i = 0; i < aPocetPlatnychKlucov - 1; i++) {
 			if (aKluce.get(i).getAdresa() == addr) {
-				aKluce.get(i+1).setKluc(nahrada.naklonuj());
+				aKluce.get(i + 1).setKluc(nahrada.naklonuj());
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	public Kluc dajMaximalnyKluc() {
-		return aKluce.get(aPocetPlatnychKlucov-1).getKluc().naklonuj();
+		return aKluce.get(aPocetPlatnychKlucov - 1).getKluc().naklonuj();
 	}
 
 	public BStromZaznam zoberMaximalnyKluc() {
 		if (maDostatokPrvkov()) {
-			BStromZaznam zaznam = aKluce.get(aPocetPlatnychKlucov-1);
+			BStromZaznam zaznam = aKluce.get(aPocetPlatnychKlucov - 1);
 			aPocetPlatnychKlucov--;
 			return zaznam;
 		}
 		return null;
 	}
-	
+
 	public void zaradAkoMinimalny(BStromZaznam zaznam) {
 		if (!jeList()) {
 			long prvaAddr = aAddr;
@@ -314,23 +315,24 @@ public class Uzol extends AZaznam {
 		}
 		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
 			if (aKluce.get(i).getAdresa() == adresa) {
-				if (i == 0)
+				if (i == 0) {
 					return aAddr;
+				}
 				else {
-					return aKluce.get(i-1).getAdresa();
+					return aKluce.get(i - 1).getAdresa();
 				}
 			}
 		}
 		return -1;
 	}
-	
+
 	public long dajPravehoBrata(long adresa) {
 		if (adresa == aAddr && aPocetPlatnychKlucov > 0) {
 			return aKluce.get(0).getAdresa();
 		}
-		for (int i = 0; i < aPocetPlatnychKlucov-1; i++) {
+		for (int i = 0; i < aPocetPlatnychKlucov - 1; i++) {
 			if (aKluce.get(i).getAdresa() == adresa) {
-				return aKluce.get(i+1).getAdresa();
+				return aKluce.get(i + 1).getAdresa();
 			}
 		}
 		return -1;
@@ -359,7 +361,7 @@ public class Uzol extends AZaznam {
 	}
 
 	public void spojBloky(Uzol paUzol) {
-		for (int i=0; i<paUzol.aPocetPlatnychKlucov; i++) {
+		for (int i = 0; i < paUzol.aPocetPlatnychKlucov; i++) {
 			aKluce.set(aPocetPlatnychKlucov, paUzol.aKluce.get(i));
 			aPocetPlatnychKlucov++;
 		}
@@ -371,12 +373,12 @@ public class Uzol extends AZaznam {
 	public Kluc dajPredchadzajuciKluc(Kluc paKluc) {
 		for (int i = 1; i < aPocetPlatnychKlucov; i++) {
 			if (aKluce.get(i).getKluc().compareTo(paKluc) > 0) {
-				return aKluce.get(i-1).getKluc().naklonuj();
+				return aKluce.get(i - 1).getKluc().naklonuj();
 			}
 		}
-		return aKluce.get(aPocetPlatnychKlucov-1).getKluc().naklonuj();
+		return aKluce.get(aPocetPlatnychKlucov - 1).getKluc().naklonuj();
 	}
-	
+
 	public Kluc dajNasledujuciKluc(Kluc paKluc) {
 		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
 			if (aKluce.get(i).getKluc().compareTo(paKluc) > 0) {
@@ -396,7 +398,7 @@ public class Uzol extends AZaznam {
 			}
 		}
 	}
-	
+
 	public void vymaz(long addr) {
 		for (int i = 0; i < aPocetPlatnychKlucov; i++) {
 			if (aKluce.get(i).getAdresa() == addr) {
@@ -409,28 +411,29 @@ public class Uzol extends AZaznam {
 	}
 
 	public boolean jePrazdny() {
-		return aPocetPlatnychKlucov==0;
+		return aPocetPlatnychKlucov == 0;
 	}
 
 	public long dajPoslednuAdresu() {
-		if (aPocetPlatnychKlucov == 0 && !jeList())
+		if (aPocetPlatnychKlucov == 0 && !jeList()) {
 			return aAddr;
-		return aKluce.get(aPocetPlatnychKlucov-1).getAdresa();
+		}
+		return aKluce.get(aPocetPlatnychKlucov - 1).getAdresa();
 	}
-	
+
 	public void print(BinarnySubor<Uzol> paSubor) throws IOException {
 		print(paSubor, "", true);
 	}
 
 	private void print(BinarnySubor<Uzol> paSubor, String prefix, boolean isTail) throws IOException {
 		if (jeList()) {
-			for (int i = aPocetPlatnychKlucov-1; i >=0; i--) {
+			for (int i = aPocetPlatnychKlucov - 1; i >= 0; i--) {
 				System.out.println(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc());
 			}
 		}
 		else {
 			Uzol uzol;
-			for (int i = aPocetPlatnychKlucov-1; i >=0; i--) {
+			for (int i = aPocetPlatnychKlucov - 1; i >= 0; i--) {
 				uzol = (Uzol) paSubor.dajZaznam(aKluce.get(i).getAdresa()).naklonuj();
 				uzol.print(paSubor, prefix + (isTail ? "   " : "│  "), false);
 				System.out.println(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc());
