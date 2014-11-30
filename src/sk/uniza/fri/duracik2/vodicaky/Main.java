@@ -8,6 +8,9 @@ package sk.uniza.fri.duracik2.vodicaky;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
@@ -24,7 +27,7 @@ import sk.uniza.fri.duracik2.gui.reflection.Tools;
  *
  * @author Unlink
  */
-public class Main extends javax.swing.JFrame {
+public class Main extends javax.swing.JFrame implements WindowListener {
 
 	private Aplikacia aExportnySystem;
 	private Reflektor<Aplikacia> aReflektor;
@@ -33,7 +36,8 @@ public class Main extends javax.swing.JFrame {
 	/**
 	 * Creates new form Main
 	 */
-	public Main() {
+	public Main() throws IOException {
+		addWindowListener(this);
 		aExportnySystem = new Aplikacia();
 		aReflektor = new Reflektor<>(aExportnySystem);
 		initComponents();
@@ -79,6 +83,40 @@ public class Main extends javax.swing.JFrame {
 		});
 
 		setLocationRelativeTo(null);
+	}
+
+	@Override
+	public void windowOpened(WindowEvent paE) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent paE) {
+		try {
+			aExportnySystem.close();
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent paE) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent paE) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent paE) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent paE) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent paE) {
 	}
 
 	private void vypis(Object obj) {
@@ -251,7 +289,12 @@ public class Main extends javax.swing.JFrame {
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new Main().setVisible(true);
+				try {
+					new Main().setVisible(true);
+				}
+				catch (IOException ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 	}
