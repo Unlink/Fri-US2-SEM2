@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import sk.uniza.fri.duracik2.blockfile.AZaznam;
+import sk.uniza.fri.duracik2.blockfile.BinarnySubor;
 import sk.uniza.fri.duracik2.blockfile.IZaznam;
 
 /**
@@ -415,5 +416,27 @@ public class Uzol extends AZaznam {
 		if (aPocetPlatnychKlucov == 0 && !jeList())
 			return aAddr;
 		return aKluce.get(aPocetPlatnychKlucov-1).getAdresa();
+	}
+	
+	public void print(BinarnySubor<Uzol> paSubor) throws IOException {
+		print(paSubor, "", true);
+	}
+
+	private void print(BinarnySubor<Uzol> paSubor, String prefix, boolean isTail) throws IOException {
+		if (jeList()) {
+			for (int i = aPocetPlatnychKlucov-1; i >=0; i--) {
+				System.out.println(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc());
+			}
+		}
+		else {
+			Uzol uzol;
+			for (int i = aPocetPlatnychKlucov-1; i >=0; i--) {
+				uzol = (Uzol) paSubor.dajZaznam(aKluce.get(i).getAdresa()).naklonuj();
+				uzol.print(paSubor, prefix + (isTail ? "   " : "│  "), false);
+				System.out.println(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc());
+			}
+			uzol = (Uzol) paSubor.dajZaznam(aAddr).naklonuj();
+			uzol.print(paSubor, prefix + (isTail ? "   " : "│  "), false);
+		}
 	}
 }

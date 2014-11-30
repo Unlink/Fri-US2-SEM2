@@ -336,4 +336,11 @@ public class BStrom implements AutoCloseable {
 		Uzol paUzol = aSubor.dajZaznam(addr);
 		return najdiMaximalnyKluc(paUzol);
 	}
+	
+	public void vypisStrom() throws IOException {
+		if (aInfoBlok.getKoren() > 0) {
+			Uzol koren = (Uzol) aSubor.dajZaznam(aInfoBlok.getKoren()).naklonuj();
+			koren.print(aSubor);
+		}
+	}
 }

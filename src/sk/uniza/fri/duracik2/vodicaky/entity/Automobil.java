@@ -172,4 +172,6 @@ public class Automobil extends AZaznam {
 		return "Automobil{" + "aEvcVozidla=" + aEvcVozidla + ", aVinCislo=" + aVinCislo + '}';
 	}
 	
+	
+	
 }

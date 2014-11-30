@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sk.uniza.fri.duracik2.vodicaky;
+package sk.uniza.fri.duracik2.testy;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import sk.uniza.fri.duracik2.blockfile.BinarnySubor;
 import sk.uniza.fri.duracik2.blockfile.IZaznam;
 import sk.uniza.fri.duracik2.vodicaky.entity.Automobil;
@@ -23,11 +25,16 @@ public class Main {
 		try(
 			BinarnySubor<Automobil> test = new BinarnySubor<>(new Automobil(), 4, new File("testSubor.bin"))
 		) {
-			/*HashMap<String, Long> testData = new HashMap<>();
+			HashMap<String, Long> testData = new HashMap<>();
 			HashMap<String, Long> testData2 = new HashMap<>();
-			for (int i = 0; i < 100000; i++) {
+			HashSet<String> unikatnySet = new HashSet<>();
+			for (int i = 0; i < 20000; i++) {
+				String kluc = randomString(7).toUpperCase();
+				while (unikatnySet.contains(kluc))
+					kluc = randomString(7).toUpperCase();
+				unikatnySet.add(kluc);
 				Automobil record = test.dajVolnyZaznam();
-				record.setEvcVozidla(randomString(7).toUpperCase());
+				record.setEvcVozidla(kluc);
 				record.nastavValiditu(true);
 				test.ulozBlok();
 				testData.put(record.getEvcVozidla(), record.dajAdresu());
@@ -52,14 +59,19 @@ public class Main {
 				record.nastavValiditu(false);
 				test.ulozBlok();
 				testData2.remove(entrySet.getKey());
-				if (x++ > 60000) {
+				unikatnySet.remove(entrySet.getKey());
+				if (x++ > 10000) {
 					break;
 				}
 			}
 			
-			for (int i = 0; i < 60000; i++) {
+			for (int i = 0; i < 20000; i++) {
+				String kluc = randomString(7).toUpperCase();
+				while (unikatnySet.contains(kluc))
+					kluc = randomString(7).toUpperCase();
+				unikatnySet.add(kluc);
 				Automobil record = test.dajVolnyZaznam();
-				record.setEvcVozidla(randomString(7).toUpperCase());
+				record.setEvcVozidla(kluc);
 				record.nastavValiditu(true);
 				test.ulozBlok();
 				testData2.put(record.getEvcVozidla(), record.dajAdresu());
@@ -83,51 +95,7 @@ public class Main {
 				test.ulozBlok();
 			}
 			
-			
- 			Automobil record = test.dajVolnyZaznam();
-			record.setEvcVozidla(randomString(7).toUpperCase());
-			record.nastavValiditu(true);
-			test.ulozBlok();
-			/*long auto = record.dajAdresu();
-			record.nastavValiditu(false);
-			test.ulozBlok();*/
-			//System.out.println("Adresa noveho recordu "+record.dajAdresu());
-			
-			/*Automobil record = test.dajVolnyZaznam();
-			record.setEvcVozidla("ZA000AB");
-			record.nastavValiditu(true);
-			test.ulozBlok();*/
-			
-			System.out.println(test.toString());
-			
-			/*
-			record = test.dajVolnyZaznam();
-			record.setEvcVozidla(randomString(7).toUpperCase());
-			record.nastavValiditu(true);
-			test.ulozBlok();
-			long auto2 = record.dajAdresu();
-			
-			record = test.dajVolnyZaznam();
-			record.setEvcVozidla(randomString(7).toUpperCase());
-			record.nastavValiditu(true);
-			test.ulozBlok();
-			long auto3 = record.dajAdresu();
-			
-			record = test.dajVolnyZaznam();
-			record.setEvcVozidla(randomString(7).toUpperCase());
-			record.nastavValiditu(true);
-			test.ulozBlok();
-			long auto4 = record.dajAdresu();
-			
-			record = test.dajZaznam(auto3);
-			record.nastavValiditu(false);
-			test.ulozBlok();
-			
-			record = test.dajZaznam(auto4);
-			record.nastavValiditu(false);
-			test.ulozBlok();*/
-			
-			
+			System.out.println(test.toString());		
 			
 		}
 		catch (Exception ex) {
@@ -138,13 +106,12 @@ public class Main {
 	private static int EVCX = 1;
 	
 	public static String randomString(int len) {
-		/*String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz";
+		String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz";
 		Random rg = new Random();
 		StringBuilder sb = new StringBuilder(len);
 		for (int i = 0; i < len; i++) {
 			sb.append(AB.charAt(rg.nextInt(AB.length())));
 		}
-		return sb.toString();*/
-		return ""+(EVCX++);
+		return sb.toString();
 	}
 }
