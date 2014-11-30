@@ -421,25 +421,32 @@ public class Uzol extends AZaznam {
 		return aKluce.get(aPocetPlatnychKlucov - 1).getAdresa();
 	}
 
-	public void print(BinarnySubor<Uzol> paSubor) throws IOException {
-		print(paSubor, "", true);
+	public void print(BinarnySubor<Uzol> paSubor, StringBuilder sb) throws IOException {
+		print(paSubor, "", true, sb);
 	}
 
-	private void print(BinarnySubor<Uzol> paSubor, String prefix, boolean isTail) throws IOException {
+	private void print(BinarnySubor<Uzol> paSubor, String prefix, boolean isTail, StringBuilder sb) throws IOException {
 		if (jeList()) {
 			for (int i = aPocetPlatnychKlucov - 1; i >= 0; i--) {
-				System.out.println(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc());
+				sb.append(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc()).append("\n");
 			}
 		}
 		else {
 			Uzol uzol;
 			for (int i = aPocetPlatnychKlucov - 1; i >= 0; i--) {
 				uzol = (Uzol) paSubor.dajZaznam(aKluce.get(i).getAdresa()).naklonuj();
-				uzol.print(paSubor, prefix + (isTail ? "   " : "│  "), false);
-				System.out.println(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc());
+				uzol.print(paSubor, prefix + (isTail ? "   " : "│  "), false, sb);
+				sb.append(prefix + (isTail ? "└─ " : "├─ ") + aKluce.get(i).getKluc()).append("\n");
 			}
 			uzol = (Uzol) paSubor.dajZaznam(aAddr).naklonuj();
-			uzol.print(paSubor, prefix + (isTail ? "   " : "│  "), false);
+			uzol.print(paSubor, prefix + (isTail ? "   " : "│  "), false, sb);
 		}
+	}
+
+	public long dajAdresuZIndexu(int paI) {
+		if (paI == -1) {
+			return aAddr;
+		}
+		return aKluce.get(paI).getAdresa();
 	}
 }

@@ -164,7 +164,7 @@ public class Blok implements Cloneable {
 		StringBuilder sb = new StringBuilder("Blok - " + aAdresaBloku + "\n");
 		for (int i = 0; i < aZaznamy.length; i++) {
 			if (aZaznamy[i].jeValidny()) {
-				sb.append(i).append(": ").append(aZaznamy[i].toString()).append("\n");
+				sb.append(i).append("("+aZaznamy[i].dajAdresu()+"): ").append(aZaznamy[i].toString()).append("\n");
 			}
 			else {
 				sb.append(i).append(": ").append("Neplatny").append("\n");

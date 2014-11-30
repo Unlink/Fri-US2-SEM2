@@ -8,6 +8,7 @@ package sk.uniza.fri.duracik2.vodicaky.entity;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import sk.uniza.fri.duracik2.blockfile.AZaznam;
@@ -15,12 +16,14 @@ import sk.uniza.fri.duracik2.blockfile.IZaznam;
 import sk.uniza.fri.duracik2.bstrom.Kluc;
 import sk.uniza.fri.duracik2.bstrom.StringovyKluc;
 import sk.uniza.fri.duracik2.fullIndex.IIndexovatelnyPrvok;
+import sk.uniza.fri.duracik2.gui.IGuiPrint;
+import sk.uniza.fri.duracik2.gui.JColorTextPane;
 
 /**
  *
  * @author Unlink
  */
-public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
+public class Automobil extends AZaznam implements IIndexovatelnyPrvok, IGuiPrint {
 
 	/**
 	 * dlzka 7 znakov
@@ -244,6 +247,32 @@ public class Automobil extends AZaznam implements IIndexovatelnyPrvok {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void print(JColorTextPane paNe) {
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		paNe.append("EVC: ");
+		paNe.append(aEvcVozidla);
+		paNe.append("\n");
+		paNe.append("Vin: ");
+		paNe.append(aVinCislo);
+		paNe.append("\n");
+		paNe.append("Naprav: ");
+		paNe.append(aPocetNaprav+"");
+		paNe.append("\n");
+		paNe.append("Hmotnost: ");
+		paNe.append(aHmotnost+"");
+		paNe.append("\n");
+		paNe.append("Dat STK: ");
+		paNe.append(format.format(aKoniecStk));
+		paNe.append("\n");
+		paNe.append("Dat EK: ");
+		paNe.append(format.format(aKonciecEk));
+		paNe.append("\n");
+		paNe.append("V patrani: ");
+		paNe.append(aVPatrani+"");
+		paNe.append("\n");
 	}
 
 }

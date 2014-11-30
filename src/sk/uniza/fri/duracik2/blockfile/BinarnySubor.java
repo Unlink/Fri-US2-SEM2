@@ -266,24 +266,33 @@ public class BinarnySubor<T extends IZaznam> implements AutoCloseable {
 		aSubor.setLength(aInfoBlok.getPocetBlokov() * aInfoBlok.getVelkostBloku() + aInfoBlok.getVelkostBloku());
 		aBuffer.nastavAdresuBloku(-1);
 	}
+	
+	public void vyprazdni() throws IOException {
+		aInfoBlok.setPocetBlokov(0);
+		aInfoBlok.setPocetInfoBlokov(1);
+		aBitPole = aBitPole = new BlokoveBitovePole(aInfoBlok.getVelkostBloku(), aInfoBlok.getVelkostBloku());
+		aSubor.setLength(aInfoBlok.getVelkostBloku());
+		aBuffer.nastavAdresuBloku(-1);
+		aPoslednyBlok = 0;
+	}
 
 	@Override
 	public String toString() {
-		/*StringBuilder sb = new StringBuilder();
-		 sb.append("Súbor: ").append(aCesta.getAbsolutePath()).append("\n");
-		 sb.append("Pocet bitblokov: ").append(aInfoBlok.getPocetInfoBlokov()).append("\n");
-		 sb.append("Pocet blokov: ").append(aInfoBlok.getPocetBlokov()).append("\n");
-		 for (int i=0; i<aInfoBlok.getPocetBlokov(); i++) {
-		 try {
-		 nacitajBlok(realnyIndexBloku(i));
-		 sb.append(aBuffer.toString());
-		 }
-		 catch (IOException ex) {
-		 sb.append(ex.getMessage());
-		 }
-		 }
-		 return sb.toString();*/
-		return "";
+		StringBuilder sb = new StringBuilder();
+		sb.append("Súbor: ").append(aCesta.getAbsolutePath()).append("\n");
+		sb.append("Pocet bitblokov: ").append(aInfoBlok.getPocetInfoBlokov()).append("\n");
+		sb.append("Pocet blokov: ").append(aInfoBlok.getPocetBlokov()).append("\n");
+		for (int i = 0; i < aInfoBlok.getPocetBlokov(); i++) {
+			try {
+				nacitajBlok(realnyIndexBloku(i));
+				sb.append(aBuffer.toString());
+			}
+			catch (IOException ex) {
+				sb.append(ex.getMessage());
+			}
+		}
+		aBuffer.nastavAdresuBloku(-1);
+		return sb.toString();
 	}
 
 }

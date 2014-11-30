@@ -8,18 +8,21 @@ package sk.uniza.fri.duracik2.vodicaky.entity;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import sk.uniza.fri.duracik2.blockfile.AZaznam;
 import sk.uniza.fri.duracik2.blockfile.IZaznam;
 import sk.uniza.fri.duracik2.bstrom.IntovyKluc;
 import sk.uniza.fri.duracik2.bstrom.Kluc;
 import sk.uniza.fri.duracik2.fullIndex.IIndexovatelnyPrvok;
+import sk.uniza.fri.duracik2.gui.IGuiPrint;
+import sk.uniza.fri.duracik2.gui.JColorTextPane;
 
 /**
  *
  * @author Unlink
  */
-public class Preukaz extends AZaznam implements IIndexovatelnyPrvok {
+public class Preukaz extends AZaznam implements IIndexovatelnyPrvok, IGuiPrint {
 
 	//40 znakov
 	private String aMeno;
@@ -125,6 +128,82 @@ public class Preukaz extends AZaznam implements IIndexovatelnyPrvok {
 		aPriezvisko = preukaz.aPriezvisko;
 		aZakaz = preukaz.aZakaz;
 		aPocetPriestupkov = preukaz.aPocetPriestupkov;
+	}
+
+	public String getMeno() {
+		return aMeno;
+	}
+
+	public void setMeno(String meno) {
+		this.aMeno = meno;
+	}
+
+	public String getPriezvisko() {
+		return aPriezvisko;
+	}
+
+	public void setPriezvisko(String priezvisko) {
+		this.aPriezvisko = priezvisko;
+	}
+
+	public int getCislo() {
+		return aCislo;
+	}
+
+	public void setCislo(int cislo) {
+		this.aCislo = cislo;
+	}
+
+	public Date getDatumPlatnosti() {
+		return aDatumPlatnosti;
+	}
+
+	public void setDatumPlatnosti(Date datumPlatnosti) {
+		this.aDatumPlatnosti = datumPlatnosti;
+	}
+
+	public boolean isZakaz() {
+		return aZakaz;
+	}
+
+	public void setZakaz(boolean zakaz) {
+		this.aZakaz = zakaz;
+	}
+
+	public int getPocetPriestupkov() {
+		return aPocetPriestupkov;
+	}
+
+	public void setPocetPriestupkov(int pocetPriestupkov) {
+		this.aPocetPriestupkov = pocetPriestupkov;
+	}
+
+	@Override
+	public void print(JColorTextPane paNe) {
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		paNe.append("Meno: ");
+		paNe.append(aMeno);
+		paNe.append("\n");
+		paNe.append("Priezvisko: ");
+		paNe.append(aPriezvisko);
+		paNe.append("\n");
+		paNe.append("Cislo: ");
+		paNe.append(aCislo+"");
+		paNe.append("\n");
+		paNe.append("Dat Platnosti: ");
+		paNe.append(format.format(aDatumPlatnosti));
+		paNe.append("\n");
+		paNe.append("Zakaz: ");
+		paNe.append(aZakaz+"");
+		paNe.append("\n");
+		paNe.append("Priestupkov: ");
+		paNe.append(aPocetPriestupkov+"");
+		paNe.append("\n");
+	}
+
+	@Override
+	public String toString() {
+		return "Preukaz{" + "aCislo=" + aCislo + '}';
 	}
 	
 }

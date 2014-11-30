@@ -7,7 +7,10 @@ package sk.uniza.fri.duracik2.bstrom;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import sk.uniza.fri.duracik2.blockfile.BinarnySubor;
 import sk.uniza.fri.duracik2.blockfile.Blok;
 
@@ -277,18 +280,6 @@ public class BStrom implements AutoCloseable {
 		aInfoBlok.setZacUtriedeneho(koren.dajAdresu());
 	}
 
-	public void inOrderVypis() throws IOException {
-		if (aInfoBlok.getKoren() == -1) {
-			return;
-		}
-		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getZacUtriedeneho());
-		System.out.println(uzol);
-		while (uzol.getAddr() > 0) {
-			uzol = aSubor.dajZaznam(uzol.getAddr());
-			System.out.println(uzol);
-		}
-	}
-
 	private void zmenKluce(LinkedList<Blok> bloky, Kluc k1, Kluc kluc) throws IOException {
 		for (int i = bloky.size() - 1; i >= 0; i--) {
 			Blok blok = bloky.get(i);
@@ -341,10 +332,59 @@ public class BStrom implements AutoCloseable {
 		return najdiMaximalnyKluc(paUzol);
 	}
 
-	public void vypisStrom() throws IOException {
+	public void vyprazdni() throws IOException {
+		aSubor.vyprazdni();
+		aInfoBlok.setZacUtriedeneho(-1);
+		aInfoBlok.setKoren(-1);
+	}
+	
+	public void vypisStrom(StringBuilder sb) throws IOException {
 		if (aInfoBlok.getKoren() > 0) {
 			Uzol koren = (Uzol) aSubor.dajZaznam(aInfoBlok.getKoren()).naklonuj();
-			koren.print(aSubor);
+			koren.print(aSubor, sb);
 		}
 	}
+	
+	public void vypisStrom() throws IOException {
+		StringBuilder sb = new StringBuilder();
+		vypisStrom(sb);
+		System.out.println(sb.toString());
+	}
+	
+	@Override
+	public String toString() {
+		return aSubor.toString();
+	}
+	
+	public void inOrderVypis() throws IOException {
+		if (aInfoBlok.getKoren() == -1) {
+			return;
+		}
+		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getZacUtriedeneho());
+		System.out.println(uzol);
+		while (uzol.getAddr() > 0) {
+			uzol = aSubor.dajZaznam(uzol.getAddr());
+			System.out.println(uzol);
+		}
+	}
+	
+	
+	public List<Long> inOrderAdresy() throws IOException {
+		if (aInfoBlok.getKoren() == -1) {
+			return new ArrayList<>(0);
+		}
+		LinkedList<Long> list = new LinkedList<>();
+		Uzol uzol = aSubor.dajZaznam(aInfoBlok.getZacUtriedeneho());
+		for (int i=0; i<uzol.getPocetPlatnychKlucov(); i++) {
+			list.add(uzol.dajAdresuZIndexu(i));
+		}
+		while (uzol.getAddr() > 0) {
+			uzol = aSubor.dajZaznam(uzol.getAddr());
+			for (int i=0; i<uzol.getPocetPlatnychKlucov(); i++) {
+				list.add(uzol.dajAdresuZIndexu(i));
+			}
+		}
+		return list;
+	}
+	
 }
