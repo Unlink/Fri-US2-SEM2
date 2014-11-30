@@ -5,7 +5,6 @@
  */
 package sk.uniza.fri.duracik2.vodicaky.entity;
 
-import com.sun.org.apache.bcel.internal.generic.IndexedInstruction;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
